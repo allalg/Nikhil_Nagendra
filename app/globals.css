@@ -1,26 +1,132 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #000000;
+  --foreground: #f5f5f5;
+  --font-architects: "Architects Daughter", cursive;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #000000;
+  color: #f5f5f5;
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
+/* Maintain full-screen WebGL viewport strictness */
+canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  touch-action: none;
+  user-select: none;
+}
+
+/* Force cursor hiding */
+.custom-cursor-active,
+.custom-cursor-active * {
+  cursor: none !important;
+}
+
+/* Premium charcoal hand-sketched font — Architects Daughter */
+.font-handwritten {
+  font-family: var(--font-architects-daughter), var(--font-architects), sans-serif;
+}
+
+/* Personal handwriting font — Nikhil's actual handwriting for intimate annotations */
+.font-myfont {
+  font-family: var(--font-myfont), var(--font-architects-daughter), cursive;
+}
+
+/* Atmospheric cubic-bezier transitions */
+.cubic-bezier-transition {
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* --- Preloader Opening Sequence --- */
+
+/* Slow breathing amber pulse for ember core */
+@keyframes pulseGlow {
+  0%, 100% { transform: scale(0.95); opacity: 0.3; }
+  50%       { transform: scale(1.05); opacity: 0.75; }
+}
+.animate-pulse-glow {
+  animation: pulseGlow 4s ease-in-out infinite;
+}
+
+/* Ember glow expansion from pinpoint to atmospheric halo */
+@keyframes glowExpand {
+  0%   { transform: scale(0.1); opacity: 0; }
+  40%  { opacity: 0.6; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.animate-glow-expand {
+  animation: glowExpand 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Floating ember particle rise */
+@keyframes emberFloat {
+  0%   { transform: translate(0, 0) scale(1); opacity: 0.9; }
+  100% { transform: translate(var(--float-x), var(--float-y)) scale(0); opacity: 0; }
+}
+.animate-ember-float {
+  animation: emberFloat var(--float-dur) ease-out forwards;
+}
+
+/* Handwritten text character reveal */
+@keyframes charReveal {
+  0%   { opacity: 0; transform: translateY(4px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.animate-char-reveal {
+  animation: charReveal 0.06s ease-out forwards;
+  opacity: 0;
+}
+
+/* Text block fade out */
+@keyframes textFadeOut {
+  0%   { opacity: 1; }
+  100% { opacity: 0; }
+}
+.animate-text-fade-out {
+  animation: textFadeOut 0.8s ease-in forwards;
+}
+
+/* --- Organic Flame Animations --- */
+@keyframes flameCore {
+  0%, 100% { transform: scale(1) translate(0, 0) rotate(0deg); }
+  20%       { transform: scale(1.04, 0.96) translate(-1px, 1px) rotate(-1deg); }
+  40%       { transform: scale(0.96, 1.05) translate(1px, -2px) rotate(1.5deg); }
+  60%       { transform: scale(1.02, 0.98) translate(-1px, -1px) rotate(-0.5deg); }
+  80%       { transform: scale(0.98, 1.02) translate(1px, 2px) rotate(1deg); }
+}
+
+@keyframes flameMid {
+  0%, 100% { transform: scale(1) skewX(0deg) translate(0, 0); }
+  25%       { transform: scale(1.05, 0.95) skewX(-2deg) translate(-2px, 1px); }
+  50%       { transform: scale(0.95, 1.08) skewX(3deg) translate(1px, -3px); }
+  75%       { transform: scale(1.02, 0.98) skewX(-1.5deg) translate(-1px, -1px); }
+}
+
+@keyframes flameOuter {
+  0%, 100% { transform: scale(1) skewX(0deg) rotate(0deg); filter: blur(1px); }
+  30%       { transform: scale(1.08, 0.92) skewX(-3.5deg) rotate(-2.5deg); filter: blur(1.2px); }
+  60%       { transform: scale(0.92, 1.12) skewX(4.5deg) rotate(3deg); filter: blur(0.8px); }
+  85%       { transform: scale(1.04, 0.96) skewX(-2deg) rotate(-1deg); filter: blur(1.1px); }
+}
+
+/* Floating ember sparks from cursor */
+@keyframes emberRise {
+  0%   { transform: translate(0, 0) scale(1); opacity: 0.95; }
+  100% { transform: translate(var(--sway-x), var(--rise-y)) scale(0.1); opacity: 0; }
+}
+
+.animate-flame-core   { animation: flameCore 0.45s ease-in-out infinite alternate; transform-origin: bottom center; }
+.animate-flame-mid    { animation: flameMid 0.65s ease-in-out infinite alternate; transform-origin: bottom center; }
+.animate-flame-outer  { animation: flameOuter 0.85s ease-in-out infinite alternate; transform-origin: bottom center; }
+.ember-spark          { animation: emberRise var(--duration) ease-out forwards; }
