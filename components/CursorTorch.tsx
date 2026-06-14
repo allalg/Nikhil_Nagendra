@@ -15,7 +15,6 @@ export default function CursorTorch({ visibleAfterLoading }: CursorTorchProps) {
   const mouseRef = useRef({ x: 0, y: 0 });
   const currentRef = useRef({ x: 0, y: 0 });
   const lastEmberTime = useRef(0);
-  const isMoving = useRef(false);
   const frameId = useRef<number | null>(null);
 
   useEffect(() => {
@@ -36,7 +35,6 @@ export default function CursorTorch({ visibleAfterLoading }: CursorTorchProps) {
     const handleMouseMove = (e: MouseEvent) => {
       mouseRef.current.x = e.clientX;
       mouseRef.current.y = e.clientY;
-      isMoving.current = true;
     };
 
     window.addEventListener("mousemove", handleMouseMove);
@@ -68,7 +66,7 @@ export default function CursorTorch({ visibleAfterLoading }: CursorTorchProps) {
 
       // Position spark near the flame tip (slightly offset)
       const offsetWordX = (Math.random() - 0.5) * 12;
-      const offsetWordY = -4 + (Math.random() - 0.5) * 8; // Flame tip offset
+      const offsetWordY = -4 + (Math.random() - 0.5) * 8;
 
       spark.style.left = `${x + offsetWordX}px`;
       spark.style.top = `${y + offsetWordY}px`;
@@ -81,12 +79,11 @@ export default function CursorTorch({ visibleAfterLoading }: CursorTorchProps) {
       }, 1500);
     };
 
-    // Linear interpolation loop (lerp)
-    const tick = (timestamp: number) => {
+    // Lerp loop — same 0.042 factor as the 3D Torch light
+    const tick = () => {
       const targetX = mouseRef.current.x;
       const targetY = mouseRef.current.y;
 
-      // Luxurious cinematic interpolation lag (0.042)
       currentRef.current.x += (targetX - currentRef.current.x) * 0.042;
       currentRef.current.y += (targetY - currentRef.current.y) * 0.042;
 
@@ -95,14 +92,14 @@ export default function CursorTorch({ visibleAfterLoading }: CursorTorchProps) {
         containerRef.current.style.transform = `translate3d(${currentRef.current.x}px, ${currentRef.current.y}px, 0)`;
       }
 
-      // Spawn thermodynamic floating embers on motion or slowly on rest
+      // Spawn thermodynamic floating embers on motion or slowly at rest
       const now = performance.now();
       const velocity = Math.sqrt(
         Math.pow(targetX - currentRef.current.x, 2) +
         Math.pow(targetY - currentRef.current.y, 2)
       );
 
-      const spawnRate = velocity > 5 ? 80 : 350; // Spawn faster when moving
+      const spawnRate = velocity > 5 ? 80 : 350;
 
       if (now - lastEmberTime.current > spawnRate) {
         createSpark(currentRef.current.x, currentRef.current.y);

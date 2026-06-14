@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { torchPosRef } from "./torchState";
+import { torchPosRef, torchScreenRef } from "./torchState";
 
 interface TorchProps {
   baseIntensity?: number;
@@ -28,10 +28,10 @@ export default function Torch({ baseIntensity = 22 }: TorchProps) {
     targetPos.current.y = camera.position.y + (pointer.y * viewport.height) / 2;
     targetPos.current.z = 2.5;
 
-    smoothPos.current.lerp(targetPos.current, 0.05);
+    smoothPos.current.lerp(targetPos.current, 0.042);
 
-    const driftX = Math.sin(time * 0.8) * 0.05;
-    const driftY = Math.cos(time * 0.65) * 0.04;
+    const driftX = Math.sin(time * 0.8) * 0.02;
+    const driftY = Math.cos(time * 0.65) * 0.015;
 
     const px = smoothPos.current.x + driftX;
     const py = smoothPos.current.y + driftY;
@@ -39,6 +39,14 @@ export default function Torch({ baseIntensity = 22 }: TorchProps) {
 
     // Write to shared ref so WallSconces can check proximity
     torchPosRef.current.set(px, py, pz);
+
+    // Write screen-space pixel position for CursorTorch sync.
+    // Project the smoothed 3D position back to screen coords so the HTML
+    // cursor matches the actual light position (including lerp lag + drift).
+    const size = state.size;
+    const projected = new THREE.Vector3(px, py, pz).project(camera);
+    torchScreenRef.current.x = ((projected.x + 1) / 2) * size.width;
+    torchScreenRef.current.y = ((1 - projected.y) / 2) * size.height;
 
     // Core flame — direct hot-spot on the stone
     coreLightRef.current.position.set(px, py, pz);

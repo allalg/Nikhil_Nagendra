@@ -6,6 +6,7 @@ import Preloader from "@/components/Preloader";
 import CursorTorch from "@/components/CursorTorch";
 import AtmosphericOverlay from "@/components/AtmosphericOverlay";
 import CaveNav from "@/components/CaveNav";
+import ProjectPreview from "@/components/ProjectPreview";
 
 const CinematicCanvas = dynamic(() => import("@/components/CinematicCanvas"), {
   ssr: false,
@@ -46,6 +47,9 @@ export default function Home() {
       <AtmosphericOverlay
         visibleAfterLoading={!isLoading}
       />
+
+      {/* Project preview popups on hover */}
+      <ProjectPreview visible={!isLoading} />
 
       {/* Cave nav dots — display only, shows current section */}
       <CaveNav

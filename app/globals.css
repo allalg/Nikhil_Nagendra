@@ -130,3 +130,13 @@ canvas {
 .animate-flame-mid    { animation: flameMid 0.65s ease-in-out infinite alternate; transform-origin: bottom center; }
 .animate-flame-outer  { animation: flameOuter 0.85s ease-in-out infinite alternate; transform-origin: bottom center; }
 .ember-spark          { animation: emberRise var(--duration) ease-out forwards; }
+
+/* --- Project Preview Popup --- */
+@keyframes previewPopIn {
+  0%   { opacity: 0; transform: scale(0.9) translateY(8px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.project-preview-popup {
+  animation: previewPopIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

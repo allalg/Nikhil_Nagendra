@@ -9,7 +9,7 @@ import Torch from "./Torch";
 import EmberParticles from "./EmberParticles";
 import DustMotes from "./DustMotes";
 import WallSconces from "./WallSconces";
-import { scrollProgressRef } from "./scrollState";
+import { scrollProgressRef, cameraPosRef } from "./scrollState";
 
 interface CinematicCanvasProps {
   onLoaded: () => void;
@@ -74,6 +74,10 @@ function FreeLookController() {
     // Progress: 0 = hero (y=22), 1 = contact (y=-22.5)
     // Write to shared ref — NO setState, NO React re-render
     scrollProgressRef.current = Math.min(Math.max((22 - camY.current) / 44.5, 0), 1);
+
+    // Write camera position for ProjectPreview overlay
+    cameraPosRef.current.x = camX.current;
+    cameraPosRef.current.y = camY.current;
   });
 
   return null;
