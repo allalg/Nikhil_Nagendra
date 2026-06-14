@@ -243,8 +243,8 @@ export default function CaveWall() {
 
       const drawWobblyLine = (aC: CanvasRenderingContext2D, rC: CanvasRenderingContext2D, x1: number, y1: number, x2: number, y2: number, wobble = 2.5) => {
         const draw = (ctx: CanvasRenderingContext2D, isR: boolean) => {
-          ctx.strokeStyle = isR ? "rgba(255,255,255,0.92)" : "rgba(6,5,4,0.85)";
-          ctx.lineWidth = isR ? 2.5 : 2.0;
+          ctx.strokeStyle = isR ? "rgba(255,255,255,0.95)" : "rgba(2,1,0,0.97)";
+          ctx.lineWidth = isR ? 2.5 : 2.4;
           ctx.beginPath(); ctx.moveTo(x1, y1);
           const dist = Math.sqrt((x2-x1)**2+(y2-y1)**2);
           const segs = Math.max(3, Math.floor(dist/20));
@@ -261,8 +261,8 @@ export default function CaveWall() {
 
       const drawWobblyCurve = (aC: CanvasRenderingContext2D, rC: CanvasRenderingContext2D, pts: [number,number][], wobble = 2.5) => {
         const draw = (ctx: CanvasRenderingContext2D, isR: boolean) => {
-          ctx.strokeStyle = isR ? "rgba(255,255,255,0.92)" : "rgba(6,5,4,0.85)";
-          ctx.lineWidth = isR ? 2.5 : 2.0;
+          ctx.strokeStyle = isR ? "rgba(255,255,255,0.95)" : "rgba(2,1,0,0.97)";
+          ctx.lineWidth = isR ? 2.5 : 2.4;
           ctx.beginPath(); ctx.moveTo(pts[0][0],pts[0][1]);
           for (let i=1;i<pts.length;i++) ctx.lineTo(pts[i][0]+(fastRandom()-0.5)*wobble, pts[i][1]+(fastRandom()-0.5)*wobble);
           ctx.stroke();
@@ -279,15 +279,17 @@ export default function CaveWall() {
         const draw = (ctx: CanvasRenderingContext2D, isR: boolean) => {
           ctx.font = font;
           if (isR) {
-            ctx.fillStyle = "rgba(255,255,255,0.97)";
+            ctx.fillStyle = "rgba(255,255,255,0.99)";
             ctx.fillText(text, x, y);
           } else {
-            // Two-pass: thin stroke + fill — gives crisp charcoal edges on rough stone
-            ctx.strokeStyle = "rgba(1,0,0,0.25)";
-            ctx.lineWidth = 0.8;
+            // Three-pass: shadow + stroke + fill — darker, crisper charcoal on stone
+            ctx.fillStyle = "rgba(0,0,0,0.30)";
+            ctx.fillText(text, x + 0.6, y + 0.6);
+            ctx.strokeStyle = "rgba(0,0,0,0.45)";
+            ctx.lineWidth = 1.2;
             ctx.lineJoin = "round";
             ctx.strokeText(text, x, y);
-            ctx.fillStyle = "rgba(2,1,0,0.97)";
+            ctx.fillStyle = "rgba(0,0,0,0.99)";
             ctx.fillText(text, x, y);
           }
         };
@@ -716,15 +718,15 @@ export default function CaveWall() {
       drawWobblyText(albedoCtx, finalRoughnessCtx, "longer than certainty did.", 530, 1863, B);
 
       // ═══════════════════════════════════════════════════
-      // SECTION 5 — CONTACT (canvas y: 1910–2040)
+      // SECTION 5 — CONTACT (canvas y: 1880–2025)
       // Camera sees this at scrollProgress ≈ 1.0
       // ═══════════════════════════════════════════════════
 
-      drawWobblyLine(albedoCtx, finalRoughnessCtx, 60, 1895, 960, 1895, 1.0);
-      drawWobblyText(albedoCtx, finalRoughnessCtx, "05 CONTACT ME", 80, 1930, H2);
+      drawWobblyLine(albedoCtx, finalRoughnessCtx, 60, 1880, 960, 1880, 1.0);
+      drawWobblyText(albedoCtx, finalRoughnessCtx, "05 CONTACT ME", 80, 1915, H2);
 
       // Campfire scene (center)
-      const cfX = 500, cfY = 1985;
+      const cfX = 500, cfY = 1970;
       drawWobblyLine(albedoCtx, finalRoughnessCtx, cfX-25, cfY+15, cfX+25, cfY+15, 3.5);
       drawWobblyLine(albedoCtx, finalRoughnessCtx, cfX-12, cfY+20, cfX+12, cfY-10, 3.0);
       drawWobblyCurve(albedoCtx, finalRoughnessCtx, [[cfX-5,cfY+10],[cfX,cfY-18],[cfX+5,cfY+10]], 2.0);
@@ -732,38 +734,38 @@ export default function CaveWall() {
       drawStickFigure(albedoCtx, finalRoughnessCtx, cfX-50, cfY+10, 20, 0.8);
       drawStickFigure(albedoCtx, finalRoughnessCtx, cfX+52, cfY+10, 20, 0.8);
       // Stars
-      for (const [sx,sy] of [[450,1935],[470,1920],[520,1912],[560,1928],[590,1915],[610,1940],[630,1920]] as [number,number][]) {
+      for (const [sx,sy] of [[450,1920],[470,1905],[520,1897],[560,1913],[590,1900],[610,1925],[630,1905]] as [number,number][]) {
         const dS=(ctx: CanvasRenderingContext2D, isR: boolean)=>{ ctx.fillStyle=isR?"rgba(255,255,255,0.85)":"rgba(6,5,4,0.7)"; ctx.fillRect(sx,sy,1.5,1.5); };
         dS(albedoCtx,false); dS(finalRoughnessCtx,true);
       }
 
       // Warm invitation text
-      drawWobblyText(albedoCtx, finalRoughnessCtx, "if you've made it this far,", 80, 1960, B);
-      drawWobblyText(albedoCtx, finalRoughnessCtx, "let's build something cool together.", 80, 1980, B);
+      drawWobblyText(albedoCtx, finalRoughnessCtx, "if you've made it this far,", 80, 1945, B);
+      drawWobblyText(albedoCtx, finalRoughnessCtx, "let's build something cool together.", 80, 1965, B);
 
       // Contact details (left)
-      drawEnvelopeIcon(albedoCtx, finalRoughnessCtx, 88, 2008, 16);
-      drawWobblyText(albedoCtx, finalRoughnessCtx, "nikhilnag98@gmail.com", 112, 2011, B);
+      drawEnvelopeIcon(albedoCtx, finalRoughnessCtx, 88, 1993, 16);
+      drawWobblyText(albedoCtx, finalRoughnessCtx, "nikhilnag98@gmail.com", 112, 1996, B);
 
-      drawPhoneIcon(albedoCtx, finalRoughnessCtx, 88, 2030, 16);
-      drawWobblyText(albedoCtx, finalRoughnessCtx, "+91 9986890905", 112, 2033, B);
+      drawPhoneIcon(albedoCtx, finalRoughnessCtx, 88, 2015, 16);
+      drawWobblyText(albedoCtx, finalRoughnessCtx, "+91 9986890905", 112, 2018, B);
 
       // Social links (right of campfire)
-      drawLinkedinIcon(albedoCtx, finalRoughnessCtx, 700, 1960, 18);
-      drawWobblyText(albedoCtx, finalRoughnessCtx, "LinkedIn", 724, 1963, B);
+      drawLinkedinIcon(albedoCtx, finalRoughnessCtx, 700, 1945, 18);
+      drawWobblyText(albedoCtx, finalRoughnessCtx, "LinkedIn", 724, 1948, B);
 
-      drawGithubIcon(albedoCtx, finalRoughnessCtx, 700, 1992, 18);
-      drawWobblyText(albedoCtx, finalRoughnessCtx, "GitHub — allalg", 724, 1995, B);
+      drawGithubIcon(albedoCtx, finalRoughnessCtx, 700, 1977, 18);
+      drawWobblyText(albedoCtx, finalRoughnessCtx, "GitHub — allalg", 724, 1980, B);
 
       // Closing line
-      drawWobblyText(albedoCtx, finalRoughnessCtx, "looking forward to our next adventure.", 500, 2038, IT);
-      drawSmiley(albedoCtx, false, 840, 2033);
-      drawSmiley(finalRoughnessCtx, true, 840, 2033);
+      drawWobblyText(albedoCtx, finalRoughnessCtx, "looking forward to our next adventure.", 500, 2023, IT);
+      drawSmiley(albedoCtx, false, 840, 2018);
+      drawSmiley(finalRoughnessCtx, true, 840, 2018);
 
       // Audio icon
-      drawWobblyCurve(albedoCtx, finalRoughnessCtx, [[740,1935],[746,1935],[752,1926],[752,1944],[746,1935],[740,1935]], 1.5);
-      drawWobblyCurve(albedoCtx, finalRoughnessCtx, [[757,1931],[759,1935],[757,1939]], 1.0);
-      drawWobblyCurve(albedoCtx, finalRoughnessCtx, [[761,1927],[764,1935],[761,1943]], 1.0);
+      drawWobblyCurve(albedoCtx, finalRoughnessCtx, [[740,1920],[746,1920],[752,1911],[752,1929],[746,1920],[740,1920]], 1.5);
+      drawWobblyCurve(albedoCtx, finalRoughnessCtx, [[757,1916],[759,1920],[757,1924]], 1.0);
+      drawWobblyCurve(albedoCtx, finalRoughnessCtx, [[761,1912],[764,1920],[761,1928]], 1.0);
 
       albedoCtx.restore();
       finalRoughnessCtx.restore();

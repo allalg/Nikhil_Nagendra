@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import CaveWall from "./CaveWall";
+import SurroundWalls from "./SurroundWalls";
 import Torch from "./Torch";
 import EmberParticles from "./EmberParticles";
 import DustMotes from "./DustMotes";
@@ -48,9 +49,9 @@ function FreeLookController() {
   useFrame(({ camera, pointer }) => {
     const dead    = 0.08;
     const maxX    = 5.0;
-    // Full Y range: pointer +1 → cameraY +22 (hero), pointer -1 → cameraY -23 (contact)
-    // formula: targetY = pointer.y * 22.5 - 0.5
-    const targetY = pointer.y * 22.5 - 0.5;
+    // Full Y range: pointer +1 → cameraY +22 (hero), pointer -1 → cameraY -22.5 (contact)
+    // formula: targetY = pointer.y * 22.25 - 0.25
+    const targetY = pointer.y * 22.25 - 0.25;
 
     // Horizontal: dead-zone ramp
     let tx = 0;
@@ -70,9 +71,9 @@ function FreeLookController() {
     // Always face wall head-on
     camera.lookAt(camera.position.x, camera.position.y, 0);
 
-    // Progress: 0 = hero (y=22), 1 = contact (y=-23)
+    // Progress: 0 = hero (y=22), 1 = contact (y=-22.5)
     // Write to shared ref — NO setState, NO React re-render
-    scrollProgressRef.current = Math.min(Math.max((22 - camY.current) / 45, 0), 1);
+    scrollProgressRef.current = Math.min(Math.max((22 - camY.current) / 44.5, 0), 1);
   });
 
   return null;
@@ -102,11 +103,32 @@ export default function CinematicCanvas({ onLoaded }: CinematicCanvasProps) {
         {/* Flat sandstone cave wall — 20×52 world units */}
         <CaveWall />
 
-        {/* Cursor torch — ONLY light source in pitch-black cave */}
-        <Torch baseIntensity={28} />
+        {/* Surrounding stone panels — no text, fill camera edges */}
+        <SurroundWalls />
+
+        {/* Cursor torch — primary light source */}
+        <Torch baseIntensity={36} />
 
         {/* Wall sconces — click with torch to ignite permanently */}
         <WallSconces />
+
+        {/* ── Section ambient lights ──────────────────────────────────────── */}
+        {/* Subtle permanent warm glow at hero and contact sections so the    */}
+        {/* charcoal text there is more legible even before the torch arrives. */}
+        <pointLight
+          position={[0, 22, 3.5]}
+          color="#cc8844"
+          intensity={6}
+          distance={18}
+          decay={1.2}
+        />
+        <pointLight
+          position={[0, -22, 3.5]}
+          color="#cc8844"
+          intensity={6}
+          distance={18}
+          decay={1.2}
+        />
 
         {/* Volumetric cave dust */}
         <DustMotes />

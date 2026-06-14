@@ -43,7 +43,7 @@ export default function Torch({ baseIntensity = 22 }: TorchProps) {
     // Core flame — direct hot-spot on the stone
     coreLightRef.current.position.set(px, py, pz);
     const cf = 1.0 + Math.sin(time * 5.2) * 0.09 + (Math.random() - 0.5) * 0.04;
-    coreLightRef.current.intensity = baseIntensity * 0.55 * cf;
+    coreLightRef.current.intensity = baseIntensity * 0.80 * cf;
     coreLightRef.current.color.setHSL(0.085, 0.95, 0.58);
 
     // Turbulence — asymmetric shimmer
@@ -53,13 +53,13 @@ export default function Torch({ baseIntensity = 22 }: TorchProps) {
       pz
     );
     const tf = 1.0 + Math.sin(time * 9.3) * 0.2 + (Math.random() - 0.5) * 0.06;
-    turbLightRef.current.intensity = baseIntensity * 0.28 * tf;
+    turbLightRef.current.intensity = baseIntensity * 0.40 * tf;
     turbLightRef.current.color.setHSL(0.062, 0.92, 0.50);
 
     // Wide halo — long-range warm bleed
     haloLightRef.current.position.set(px, py, pz + 0.5);
     const hf = 1.0 + Math.sin(time * 0.9) * 0.08;
-    haloLightRef.current.intensity = baseIntensity * 0.20 * hf;
+    haloLightRef.current.intensity = baseIntensity * 0.35 * hf;
     haloLightRef.current.color.setHSL(0.042, 0.88, 0.42);
   });
 
@@ -73,13 +73,13 @@ export default function Torch({ baseIntensity = 22 }: TorchProps) {
       */}
 
       {/* Core Flame — cursor interactive hot-spot */}
-      <pointLight ref={coreLightRef} distance={20} decay={0.9} />
+      <pointLight ref={coreLightRef} distance={26} decay={0.85} />
 
       {/* Turbulence shimmer */}
-      <pointLight ref={turbLightRef} distance={16} decay={1.1} />
+      <pointLight ref={turbLightRef} distance={22} decay={1.0} />
 
       {/* Wide Halo — long-range warm bleed from torch */}
-      <pointLight ref={haloLightRef} distance={45} decay={0.7} />
+      <pointLight ref={haloLightRef} distance={55} decay={0.6} />
     </>
   );
 }

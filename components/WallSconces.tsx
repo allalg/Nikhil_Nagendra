@@ -129,12 +129,12 @@ function SconceUnit({
 
     // ── LIGHT FLICKER ────────────────────────────────────────────────────────
     const f = 1 + Math.sin(t * 6.3) * 0.18 + (Math.random() - 0.5) * 0.10;
-    mainLightRef.current.intensity = 22 * f;
+    mainLightRef.current.intensity = 38 * f;
     mainLightRef.current.color.setHSL(
       0.07 + Math.sin(t * 0.7) * 0.012, 0.97,
       0.50 + Math.sin(t * 3.1) * 0.05,
     );
-    baseLightRef.current.intensity = 8 + Math.sin(t * 1.2) * 1.5;
+    baseLightRef.current.intensity = 14 + Math.sin(t * 1.2) * 2.5;
   });
 
   const cupZ   = 0.48;
@@ -280,16 +280,16 @@ function SconceUnit({
         position={[0, flameY + 0.30, flameZ + 0.5]}
         color="#e87010"
         intensity={0}
-        distance={34}
-        decay={0.85}
+        distance={44}
+        decay={0.75}
       />
       <pointLight
         ref={baseLightRef}
         position={[0, flameY, flameZ]}
         color="#c04008"
         intensity={0}
-        distance={12}
-        decay={1.2}
+        distance={18}
+        decay={1.0}
       />
     </group>
   );
