@@ -97,6 +97,16 @@ canvas {
   animation: textFadeOut 0.8s ease-in forwards;
 }
 
+/* Instruction line staggered reveal */
+@keyframes instructionReveal {
+  0%   { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.instruction-reveal {
+  animation: instructionReveal 0.5s ease-out forwards;
+  opacity: 0;
+}
+
 /* --- Organic Flame Animations --- */
 @keyframes flameCore {
   0%, 100% { transform: scale(1) translate(0, 0) rotate(0deg); }
@@ -139,4 +149,16 @@ canvas {
 
 .project-preview-popup {
   animation: previewPopIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* --- Contact Link Hover Highlight --- */
+.contact-link-zone {
+  text-decoration: none !important;
+  color: transparent;
+  transition: color 0.3s ease;
+}
+
+.contact-link-zone:hover {
+  color: rgb(217, 168, 80);
+  text-shadow: 0 0 8px rgba(200, 140, 40, 0.4);
 }

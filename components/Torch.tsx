@@ -17,6 +17,8 @@ export default function Torch({ baseIntensity = 22 }: TorchProps) {
   const smoothPos = useRef(new THREE.Vector3(0, 22, 2.5));
   const targetPos = useRef(new THREE.Vector3(0, 22, 2.5));
 
+  const _projVec = useRef(new THREE.Vector3());
+
   useFrame((state) => {
     const { pointer, viewport, clock, camera } = state;
     const time = clock.getElapsedTime();
@@ -44,7 +46,7 @@ export default function Torch({ baseIntensity = 22 }: TorchProps) {
     // Project the smoothed 3D position back to screen coords so the HTML
     // cursor matches the actual light position (including lerp lag + drift).
     const size = state.size;
-    const projected = new THREE.Vector3(px, py, pz).project(camera);
+    const projected = _projVec.current.set(px, py, pz).project(camera);
     torchScreenRef.current.x = ((projected.x + 1) / 2) * size.width;
     torchScreenRef.current.y = ((1 - projected.y) / 2) * size.height;
 

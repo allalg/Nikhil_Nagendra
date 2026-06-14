@@ -229,7 +229,13 @@ function buildStoneTextures(def: PanelDef) {
       else if (bandVal < 0.5)  { const t=(bandVal-0.28)/0.22;  r=lerp(t,145,165); g=lerp(t,130,125); b=lerp(t,115,85); }
       else if (bandVal < 0.8)  { const t=(bandVal-0.5)/0.3;    r=lerp(t,165,155); g=lerp(t,125,95);  b=lerp(t,85,70); }
       else                     { const t=(bandVal-0.8)/0.2;    r=lerp(t,155,145); g=lerp(t,95,105);  b=lerp(t,70,75); }
-      const staining = perlin((x/finalW)*3.5,(y/finalH)*3.5);
+      // Staining noise — use world-space coords matching center wall's mapping:
+      // CaveWall: perlin((x/1024)*3.5, (y/2048)*3.5)  where pixel maps to world
+      // as worldX = x/1024*20-10 → x/1024 = (worldX+10)/20
+      //    worldY = 26-y/2048*52 → y/2048 = (26-worldY)/52
+      const worldX = def.worldMinX + (x / finalW) * worldW;
+      const worldY = def.worldMinY + (y / finalH) * worldH;
+      const staining = perlin(((worldX + 10) / 20) * 3.5, ((26 - worldY) / 52) * 3.5);
       r += staining*14; g += staining*8; b += staining*3;
       const sandSpeckle = (fastRandom()-0.5)*6.0;
       r += sandSpeckle; g += sandSpeckle; b += sandSpeckle;

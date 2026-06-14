@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { scrollProgressRef } from "./scrollState";
+import ContactLinks from "./ContactLinks";
 
 interface AtmosphericOverlayProps {
   visibleAfterLoading: boolean;
@@ -14,7 +15,6 @@ export default function AtmosphericOverlay({ visibleAfterLoading }: AtmosphericO
   const audioSynthRef = useRef<any>(null);
 
   // DOM refs for imperative updates driven by scrollProgressRef
-  const scrollLayerRef = useRef<HTMLDivElement>(null);
   const heroHintRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number | null>(null);
 
@@ -25,18 +25,11 @@ export default function AtmosphericOverlay({ visibleAfterLoading }: AtmosphericO
   }, [visibleAfterLoading]);
 
   // ── Imperative rAF loop — reads scrollProgressRef, updates DOM directly ───
-  // This replaces the old pattern where scrollProgress was a React prop that
-  // caused re-renders every frame. Now we only touch the DOM properties that
-  // actually change (transform, opacity, display).
   useEffect(() => {
     if (!isVisible) return;
 
     const tick = () => {
       const p = scrollProgressRef.current;
-
-      if (scrollLayerRef.current) {
-        scrollLayerRef.current.style.transform = `translateY(-${p * 500}vh)`;
-      }
 
       if (heroHintRef.current) {
         if (p < 0.08) {
@@ -155,55 +148,12 @@ export default function AtmosphericOverlay({ visibleAfterLoading }: AtmosphericO
     <div className="fixed inset-0 w-full h-full pointer-events-none z-40 select-none font-handwritten">
 
       {/*
-        ── SCROLL-TRACKING LAYER ──────────────────────────────────────────────
-        Contains invisible clickable zones that sit perfectly over the charcoal
-        text etched into the 3D cave wall. No hover highlights, no popups —
-        the torch illuminating the stone IS the reveal mechanic.
-
-        Transform is now updated imperatively via rAF (scrollLayerRef).
+        ── CONTACT LINK ZONES ─────────────────────────────────────────────────
+        Camera-tracked clickable zones positioned over the LinkedIn and GitHub
+        text on the cave wall. Uses cameraPosRef for pixel-perfect positioning.
+        Hover glow signals clickability.
       */}
-      <div
-        ref={scrollLayerRef}
-        className="absolute w-full pointer-events-none"
-        style={{
-          top: 0,
-          left: 0,
-          height: "100vh",
-        }}
-      >
-        {/* ── CONTACT SECTION (scrollProgress ≈ 1.0, top ≈ 550–565%) ─────── */}
-        {/* Invisible links over the contact details drawn on the cave wall.
-            No hover effect — cursor torch lights up the stone text instead. */}
-
-        <a
-          href="mailto:nikhilnag98@gmail.com"
-          className="absolute cursor-none pointer-events-auto"
-          style={{ left: "7%", width: "32%", top: "552%", height: "5%" }}
-          aria-label="Email Nikhil"
-        />
-        <a
-          href="tel:+919986890905"
-          className="absolute cursor-none pointer-events-auto"
-          style={{ left: "7%", width: "28%", top: "558%", height: "5%" }}
-          aria-label="Call Nikhil"
-        />
-        <a
-          href="https://www.linkedin.com/in/nikhil-nagendra-a89828160/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="absolute cursor-none pointer-events-auto"
-          style={{ left: "65%", width: "22%", top: "552%", height: "5%" }}
-          aria-label="LinkedIn"
-        />
-        <a
-          href="https://github.com/allalg"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="absolute cursor-none pointer-events-auto"
-          style={{ left: "65%", width: "25%", top: "558%", height: "5%" }}
-          aria-label="GitHub"
-        />
-      </div>
+      <ContactLinks />
 
       {/*
         ── FIXED HUD ELEMENTS ────────────────────────────────────────────────

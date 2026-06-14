@@ -39,9 +39,8 @@ interface CinematicCanvasProps {
 //   visible height = 2*4.5*tan(35°) = 6.3 units.
 //   Camera at y=22 shows world y=18.85→25.15, fully covering the hero (y≈24).
 //
-// Mapping: targetY = pointer.y * 22.5 - 0.5
-//   pointer.y = +1 → targetY = +22  (top = hero)
-//   pointer.y = -1 → targetY = -23  (bottom = contact)
+// Mapping: pointer.y = +1 → targetY = +22  (top = hero)
+//          pointer.y = -1 → targetY = -28  (bottom = below contact, extra space)
 function FreeLookController() {
   const camX   = useRef(0);
   const camY   = useRef(22);
@@ -49,9 +48,9 @@ function FreeLookController() {
   useFrame(({ camera, pointer }) => {
     const dead    = 0.08;
     const maxX    = 5.0;
-    // Full Y range: pointer +1 → cameraY +22 (hero), pointer -1 → cameraY -22.5 (contact)
-    // formula: targetY = pointer.y * 22.25 - 0.25
-    const targetY = pointer.y * 22.25 - 0.25;
+    // Full Y range: pointer +1 → cameraY +22 (hero), pointer -1 → cameraY -28 (below contact)
+    // formula: targetY = pointer.y * 25 - 3
+    const targetY = pointer.y * 25 - 3;
 
     // Horizontal: dead-zone ramp
     let tx = 0;
@@ -71,9 +70,9 @@ function FreeLookController() {
     // Always face wall head-on
     camera.lookAt(camera.position.x, camera.position.y, 0);
 
-    // Progress: 0 = hero (y=22), 1 = contact (y=-22.5)
+    // Progress: 0 = hero (y=22), 1 = contact (y=-28)
     // Write to shared ref — NO setState, NO React re-render
-    scrollProgressRef.current = Math.min(Math.max((22 - camY.current) / 44.5, 0), 1);
+    scrollProgressRef.current = Math.min(Math.max((22 - camY.current) / 50, 0), 1);
 
     // Write camera position for ProjectPreview overlay
     cameraPosRef.current.x = camX.current;

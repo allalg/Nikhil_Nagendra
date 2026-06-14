@@ -21,6 +21,8 @@ interface ProjectDef {
   canvasH: number;      // height
   // Preview image path (in /public)
   image: string;
+  // GitHub repo link
+  link: string;
 }
 
 const PROJECTS: ProjectDef[] = [
@@ -28,31 +30,37 @@ const PROJECTS: ProjectDef[] = [
     name: "MEDI-XPRESS",
     canvasX: 112, canvasY: 982, canvasW: 200, canvasH: 30,
     image: "/project_preview/Ambulance.png",
+    link: "https://github.com/NitinBharadwajMVS/em-link-med",
   },
   {
     name: "GAMEATHON",
     canvasX: 397, canvasY: 982, canvasW: 175, canvasH: 30,
     image: "/project_preview/gameathon.png",
+    link: "https://github.com/Kavana917/What-If-",
   },
   {
-    name: "AI WHITEBOARD",
-    canvasX: 692, canvasY: 982, canvasW: 220, canvasH: 30,
-    image: "/project_preview/whiteBoard.png",
+    name: "TRADING BOT",
+    canvasX: 692, canvasY: 982, canvasW: 195, canvasH: 30,
+    image: "/project_preview/trading_bot.png",
+    link: "https://github.com/allalg/simplified-trading-bot",
   },
   {
     name: "FINDB",
     canvasX: 112, canvasY: 1132, canvasW: 105, canvasH: 30,
     image: "/project_preview/FinDb.png",
+    link: "https://github.com/allalg/acc_ledger",
   },
   {
     name: "ACIS-X",
     canvasX: 397, canvasY: 1132, canvasW: 130, canvasH: 30,
     image: "/project_preview/ACIS-X.png",
+    link: "https://github.com/allalg/ACIS-X",
   },
   {
     name: "RAG ENGINE",
     canvasX: 692, canvasY: 1132, canvasW: 185, canvasH: 30,
     image: "/project_preview/RAG.png",
+    link: "https://github.com/allalg/devfolio",
   },
 ];
 
@@ -233,10 +241,11 @@ export default function ProjectPreview({ visible }: ProjectPreviewProps) {
         <div
           key={project.name}
           ref={(el) => { zoneRefs.current[i] = el; }}
-          className="absolute pointer-events-auto cursor-none"
+          className="absolute pointer-events-auto cursor-pointer"
           style={{ display: "none" }}
           onMouseEnter={() => handleMouseEnter(project, i)}
           onMouseLeave={handleMouseLeave}
+          onClick={() => window.open(project.link, "_blank", "noopener,noreferrer")}
         />
       ))}
 
@@ -281,12 +290,14 @@ export default function ProjectPreview({ visible }: ProjectPreviewProps) {
               </div>
 
               {/* Image */}
-              <div className="relative w-[420px] h-[260px]">
+              <div className="relative w-[420px] h-[260px]"
+                style={{ background: "#0c0a08" }}
+              >
                 <Image
                   src={hoveredProject.image}
                   alt={hoveredProject.name}
                   fill
-                  className="object-cover"
+                  className="object-contain"
                   sizes="420px"
                   priority
                 />

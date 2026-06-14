@@ -611,13 +611,13 @@ export default function CaveWall() {
         drawWobblyText(albedoCtx, finalRoughnessCtx, "built under extreme pressure", p2X + 32, 1038, B);
         drawWobblyText(albedoCtx, finalRoughnessCtx, "3hr sleep. questionable decisions.", p2X + 14, 1060, IT);
 
-        // P3: AI Whiteboard
+        // P3: Trading Bot
         const p3X = 660;
-        drawGridBoardIcon(albedoCtx, finalRoughnessCtx, p3X + 9, 1005, 18);
-        drawWobblyText(albedoCtx, finalRoughnessCtx, "AI WHITEBOARD", p3X + 32, 1000, H3);
-        drawWobblyText(albedoCtx, finalRoughnessCtx, "Generative diagram mapping", p3X + 32, 1020, B);
-        drawWobblyText(albedoCtx, finalRoughnessCtx, "on collaborative canvases", p3X + 32, 1038, B);
-        drawWobblyText(albedoCtx, finalRoughnessCtx, "where ideas become intelligence", p3X + 14, 1060, IT);
+        drawDatabaseIcon(albedoCtx, finalRoughnessCtx, p3X + 9, 1005, 18);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "TRADING BOT", p3X + 32, 1000, H3);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "Binance Futures testnet bot", p3X + 32, 1020, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "market, limit & stop-limit orders", p3X + 32, 1038, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "paper profits. real lessons.", p3X + 14, 1060, IT);
 
         // Row 2 — 2 projects (y≈1140–1250)
         // P4: FinDB
@@ -674,7 +674,7 @@ export default function CaveWall() {
         drawWobblyLine(albedoCtx, finalRoughnessCtx, 645, 1418, 660, 1418, 0.8);
         drawWobblyLine(albedoCtx, finalRoughnessCtx, 645, 1426, 660, 1426, 0.8);
         drawWobblyLine(albedoCtx, finalRoughnessCtx, 645, 1434, 655, 1434, 0.8);
-        drawWobblyText(albedoCtx, finalRoughnessCtx, "CA CLEARED", 625, 1385, H3);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "CA", 625, 1385, H3);
         drawWobblyText(albedoCtx, finalRoughnessCtx, "foundation + inter G1.", 600, 1500, B);
         drawWobblyText(albedoCtx, finalRoughnessCtx, "discipline as survival.", 600, 1518, B);
         drawStickFigure(albedoCtx, finalRoughnessCtx, 700, 1445, 16, 0.7);

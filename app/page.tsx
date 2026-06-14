@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import dynamic from "next/dynamic";
 import Preloader from "@/components/Preloader";
 import CursorTorch from "@/components/CursorTorch";
 import AtmosphericOverlay from "@/components/AtmosphericOverlay";
 import CaveNav from "@/components/CaveNav";
 import ProjectPreview from "@/components/ProjectPreview";
+import DecodeHandwriting from "@/components/DecodeHandwriting";
 
 const CinematicCanvas = dynamic(() => import("@/components/CinematicCanvas"), {
   ssr: false,
@@ -57,6 +58,9 @@ export default function Home() {
         onNavigate={() => {}}
         visible={!isLoading}
       />
+
+      {/* Decode handwriting popup */}
+      <DecodeHandwriting />
 
       {/* Custom wooden torch cursor */}
       <CursorTorch visibleAfterLoading={!isLoading} />
