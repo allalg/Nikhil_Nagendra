@@ -39,7 +39,16 @@ export default function CursorTorch({ visibleAfterLoading }: CursorTorchProps) {
       mouseRef.current.y = e.clientY;
     };
 
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        mouseRef.current.x = e.touches[0].clientX;
+        mouseRef.current.y = e.touches[0].clientY;
+      }
+    };
+
     window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("touchstart", handleTouchMove, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
 
     // Initial position centering
     const cx = window.innerWidth / 2;
@@ -165,6 +174,8 @@ export default function CursorTorch({ visibleAfterLoading }: CursorTorchProps) {
 
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("touchstart", handleTouchMove);
+      window.removeEventListener("touchmove", handleTouchMove);
       if (frameId.current) cancelAnimationFrame(frameId.current);
     };
   }, [isVisible]);
@@ -172,7 +183,7 @@ export default function CursorTorch({ visibleAfterLoading }: CursorTorchProps) {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-50 select-none overflow-hidden">
+    <div className="fixed inset-0 pointer-events-none z-50 select-none overflow-hidden hidden md:block">
       {/* Spark Embers Layer */}
       <div ref={sparksContainerRef} className="absolute inset-0 w-full h-full pointer-events-none" />
 

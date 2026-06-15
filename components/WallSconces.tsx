@@ -308,7 +308,18 @@ export default function WallSconces() {
 
   useEffect(() => {
     const canvas = gl.domElement;
-    const handleClick = (e: MouseEvent) => {
+    // Track pointer down to prevent treating a long drag as a tap
+    let downX = 0, downY = 0;
+
+    const handlePointerDown = (e: PointerEvent) => {
+      downX = e.clientX;
+      downY = e.clientY;
+    };
+
+    const handlePointerUp = (e: PointerEvent) => {
+      // If the user swiped/dragged significantly, don't count as a click
+      if (Math.abs(e.clientX - downX) > 20 || Math.abs(e.clientY - downY) > 20) return;
+
       const rect = canvas.getBoundingClientRect();
       const ndcX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
       const ndcY = -((e.clientY - rect.top) / rect.height) * 2 + 1;
@@ -318,11 +329,17 @@ export default function WallSconces() {
         const proj = new THREE.Vector3(...s.pos).project(camera);
         if (proj.z > 1) return;
         const d = Math.sqrt((ndcX - proj.x) ** 2 + (ndcY - proj.y) ** 2);
-        if (d < 0.28) setLitSet((prev) => new Set([...prev, s.id]));
+        // Expanded hitbox (0.45) for much easier mobile tapping
+        if (d < 0.45) setLitSet((prev) => new Set([...prev, s.id]));
       });
     };
-    canvas.addEventListener("click", handleClick);
-    return () => canvas.removeEventListener("click", handleClick);
+
+    canvas.addEventListener("pointerdown", handlePointerDown);
+    canvas.addEventListener("pointerup", handlePointerUp);
+    return () => {
+      canvas.removeEventListener("pointerdown", handlePointerDown);
+      canvas.removeEventListener("pointerup", handlePointerUp);
+    };
   }, [camera, gl.domElement]);
 
   return (

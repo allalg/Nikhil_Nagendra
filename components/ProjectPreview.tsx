@@ -143,10 +143,10 @@ export default function ProjectPreview({ visible }: ProjectPreviewProps) {
         const onScreen = top > -100 && top < sh + 100 && left > -200 && left < sw + 200;
         if (onScreen) {
           el.style.display = "flex";
-          el.style.left = `${left}px`;
-          el.style.top = `${top}px`;
-          el.style.width = `${width}px`;
-          el.style.height = `${height}px`;
+          el.style.left = `${left - 24}px`;
+          el.style.top = `${top - 24}px`;
+          el.style.width = `${width + 48}px`;
+          el.style.height = `${height + 48}px`;
           el.style.fontSize = `${height * 0.75}px`;
         } else {
           el.style.display = "none";
