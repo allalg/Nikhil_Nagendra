@@ -183,7 +183,7 @@ export default function CursorTorch({ visibleAfterLoading }: CursorTorchProps) {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-50 select-none overflow-hidden hidden md:block">
+    <div className="fixed inset-0 pointer-events-none z-50 select-none overflow-hidden hidden lg:block">
       {/* Spark Embers Layer */}
       <div ref={sparksContainerRef} className="absolute inset-0 w-full h-full pointer-events-none" />
 
