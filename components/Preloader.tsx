@@ -266,10 +266,10 @@ export default function Preloader({ isLoading }: PreloaderProps) {
               <span
                 className="font-myfont"
                 style={{
-                  fontSize: "clamp(12px, 1.5vw, 16px)",
-                  color: "rgba(251, 191, 36, 0.4)",
+                  fontSize: "clamp(18px, 2.5vw, 26px)",
+                  color: "rgba(251, 191, 36, 0.9)",
                   letterSpacing: "0.08em",
-                  textShadow: "0 0 12px rgba(251,146,60,0.15)",
+                  textShadow: "0 0 16px rgba(251,146,60,0.5)",
                 }}
               >
                 entering cave...
