@@ -97,8 +97,12 @@ function SconceUnit({
     // ── Lights: zero intensity when unlit, flickering when lit ───────────────
     if (!mainLightRef.current || !baseLightRef.current) return;
     if (!lit) {
-      mainLightRef.current.intensity = 0;
-      baseLightRef.current.intensity = 0;
+      // Extremely subtle pulsing before-glow so unlit sconces are visible in the dark
+      mainLightRef.current.intensity = 1.2 + Math.sin(t * 2.5) * 0.4;
+      mainLightRef.current.color.setHSL(0.03, 0.9, 0.35); // Deep smoldering red/orange
+      
+      baseLightRef.current.intensity = 0.5;
+      baseLightRef.current.color.setHSL(0.02, 0.8, 0.25);
       return;
     }
 
