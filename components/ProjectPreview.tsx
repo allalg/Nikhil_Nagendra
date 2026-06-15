@@ -143,10 +143,10 @@ export default function ProjectPreview({ visible }: ProjectPreviewProps) {
         const onScreen = top > -100 && top < sh + 100 && left > -200 && left < sw + 200;
         if (onScreen) {
           el.style.display = "flex";
-          el.style.left = `${left - 24}px`;
-          el.style.top = `${top - 24}px`;
-          el.style.width = `${width + 48}px`;
-          el.style.height = `${height + 48}px`;
+          el.style.left = `${left}px`;
+          el.style.top = `${top}px`;
+          el.style.width = `${width}px`;
+          el.style.height = `${height}px`;
           el.style.fontSize = `${height * 0.75}px`;
         } else {
           el.style.display = "none";
@@ -239,11 +239,8 @@ export default function ProjectPreview({ visible }: ProjectPreviewProps) {
     >
       {/* Invisible hover zones positioned over each project title */}
       {PROJECTS.map((project, i) => (
-        <a
+        <div
           key={project.name}
-          href={project.link}
-          target="_blank"
-          rel="noopener noreferrer"
           ref={(el) => { zoneRefs.current[i] = el; }}
           className="absolute pointer-events-auto cursor-pointer"
           style={{ 
@@ -264,9 +261,10 @@ export default function ProjectPreview({ visible }: ProjectPreviewProps) {
             e.currentTarget.style.color = "transparent";
             e.currentTarget.style.textShadow = "none";
           }}
+          onClick={() => window.open(project.link, "_blank", "noopener,noreferrer")}
         >
           {project.name}
-        </a>
+        </div>
       ))}
 
       {/* Preview popup — viewport-clamped positioning */}

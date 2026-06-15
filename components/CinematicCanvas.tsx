@@ -1,9 +1,8 @@
 "use client";
 
 import { useRef } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
-import { useEffect } from "react";
 import CaveWall from "./CaveWall";
 import SurroundWalls from "./SurroundWalls";
 import Torch from "./Torch";
@@ -11,26 +10,6 @@ import EmberParticles from "./EmberParticles";
 import DustMotes from "./DustMotes";
 import WallSconces from "./WallSconces";
 import { scrollProgressRef, cameraPosRef } from "./scrollState";
-
-// ── RESPONSIVE FOV ──────────────────────────────────────────────────────────
-// On narrow mobile screens, vertical FOV must increase so the wall fits horizontally.
-function FovAdjuster() {
-  const { camera, size } = useThree();
-  useEffect(() => {
-    if (camera instanceof THREE.PerspectiveCamera) {
-      const aspect = size.width / size.height;
-      if (aspect < 1.0) {
-        // Portrait mode: scale FOV up to 110+ so the 20-unit wide wall fits
-        camera.fov = 70 + (1 - aspect) * 60;
-      } else {
-        // Landscape mode: base 70 FOV
-        camera.fov = 70;
-      }
-      camera.updateProjectionMatrix();
-    }
-  }, [camera, size]);
-  return null;
-}
 
 interface CinematicCanvasProps {
   onLoaded: () => void;
@@ -127,7 +106,6 @@ export default function CinematicCanvas({ onLoaded }: CinematicCanvasProps) {
       >
         <color attach="background" args={["#000000"]} />
 
-        <FovAdjuster />
         <FreeLookController />
 
         {/* Flat sandstone cave wall — 20×65 world units */}
