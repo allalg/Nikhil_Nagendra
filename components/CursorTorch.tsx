@@ -193,10 +193,15 @@ export default function CursorTorch({ visibleAfterLoading }: CursorTorchProps) {
             willChange: "transform, filter",
           }}
         >
-          {/* Flame Corona Glow (z-layer: behind) */}
+          {/* Flame Corona Glow (GPU Optimized: radial-gradient instead of heavy CSS blur) */}
           <div
-            className="absolute w-56 h-56 rounded-full bg-orange-600/10 blur-[36px] -left-4 -top-8 pointer-events-none animate-pulse-glow"
-            style={{ transform: "translateZ(-8px)" }}
+            className="absolute w-56 h-56 rounded-full pointer-events-none animate-pulse-glow"
+            style={{ 
+              left: "-1rem", 
+              top: "-2rem",
+              background: "radial-gradient(circle, rgba(234,88,12,0.2) 0%, rgba(234,88,12,0.05) 40%, rgba(234,88,12,0) 70%)",
+              transform: "translateZ(-8px)" 
+            }}
           />
 
           {/* Dynamic Layered Flame Elements — parallax-shifted separately */}
@@ -208,27 +213,27 @@ export default function CursorTorch({ visibleAfterLoading }: CursorTorchProps) {
               willChange: "transform",
             }}
           >
-            {/* Flame layer 0: Wide outer heat-haze glow */}
+            {/* Flame layer 0: Wide outer heat-haze glow (blur removed for perf) */}
             <div
-              className="absolute w-[44px] h-[72px] bg-gradient-to-t from-red-600/20 via-orange-500/10 to-transparent rounded-full opacity-35 blur-[5px] animate-flame-outer origin-bottom"
+              className="absolute w-[44px] h-[72px] bg-gradient-to-t from-red-600/20 via-orange-500/10 to-transparent rounded-full opacity-35 animate-flame-outer origin-bottom"
               style={{ transform: "translateZ(-4px)" }}
             />
 
             {/* Flame layer 1: Outer glowing shape (red-orange) */}
             <div
-              className="absolute w-[30px] h-[52px] bg-gradient-to-t from-red-600 via-orange-500 to-amber-500 rounded-[50%_50%_35%_35%/60%_60%_40%_40%] opacity-45 blur-[1px] animate-flame-outer origin-bottom"
+              className="absolute w-[30px] h-[52px] bg-gradient-to-t from-red-600 via-orange-500 to-amber-500 rounded-[50%_50%_35%_35%/60%_60%_40%_40%] opacity-45 animate-flame-outer origin-bottom"
               style={{ transform: "translateZ(2px)" }}
             />
 
             {/* Flame layer 2: Middle hot glow (orange-yellow) */}
             <div
-              className="absolute w-[22px] h-[40px] bg-gradient-to-t from-orange-500 via-amber-400 to-yellow-300 rounded-[50%_50%_30%_30%/65%_65%_35%_35%] opacity-80 blur-[0.6px] animate-flame-mid origin-bottom"
+              className="absolute w-[22px] h-[40px] bg-gradient-to-t from-orange-500 via-amber-400 to-yellow-300 rounded-[50%_50%_30%_30%/65%_65%_35%_35%] opacity-80 animate-flame-mid origin-bottom"
               style={{ transform: "translateZ(6px)" }}
             />
 
             {/* Flame layer 3: Inner core spark (bright gold-white) */}
             <div
-              className="absolute w-[12px] h-[26px] bg-gradient-to-t from-amber-400 via-yellow-100 to-white rounded-[50%_50%_25%_25%/70%_70%_30%_30%] opacity-95 animate-flame-core origin-bottom shadow-[0_0_10px_rgba(255,255,255,0.85)]"
+              className="absolute w-[12px] h-[26px] bg-gradient-to-t from-amber-200 via-yellow-100 to-white rounded-[50%_50%_25%_25%/70%_70%_30%_30%] opacity-100 animate-flame-core origin-bottom"
               style={{ transform: "translateZ(10px)" }}
             />
           </div>
@@ -245,7 +250,7 @@ export default function CursorTorch({ visibleAfterLoading }: CursorTorchProps) {
             style={{
               transformOrigin: "48px 86px",
               willChange: "transform",
-              filter: "drop-shadow(2px 6px 10px rgba(0,0,0,0.85))",
+              // drop-shadow removed: extremely slow to compute on transforming SVGs on older laptops
             }}
           >
             <defs>
