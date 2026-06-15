@@ -51,31 +51,14 @@ export default function CursorTorch({ visibleAfterLoading }: CursorTorchProps) {
     prevRef.current.x = cx;
     prevRef.current.y = cy;
 
-    // True Zero-Allocation Particle Pooling
+    // Particle pooling — capped at 30 sparks
     const MAX_SPARKS = 30;
-    const sparkPool = useRef<HTMLSpanElement[]>([]);
-    const sparkIdx = useRef(0);
-
-    // Initialize the pool once
-    if (sparkPool.current.length === 0 && sparksContainerRef.current) {
-      for (let i = 0; i < MAX_SPARKS; i++) {
-        const spark = document.createElement("span");
-        spark.className = "absolute w-1.5 h-1.5 rounded-full bg-amber-500 pointer-events-none ember-spark hidden";
-        sparksContainerRef.current.appendChild(spark);
-        sparkPool.current.push(spark);
-      }
-    }
-
     const createSpark = (x: number, y: number) => {
-      if (sparkPool.current.length === 0) return;
-      
-      const spark = sparkPool.current[sparkIdx.current];
-      sparkIdx.current = (sparkIdx.current + 1) % MAX_SPARKS;
+      if (!sparksContainerRef.current) return;
+      if (sparksContainerRef.current.childElementCount >= MAX_SPARKS) return;
 
-      // Reset CSS animation
-      spark.style.animation = 'none';
-      void spark.offsetHeight; // force reflow to restart animation
-      spark.style.animation = '';
+      const spark = document.createElement("span");
+      spark.className = "absolute w-1.5 h-1.5 rounded-full bg-amber-500 shadow-[0_0_6px_2px_rgba(245,158,11,0.6)] pointer-events-none ember-spark";
 
       const swayX = `${(Math.random() - 0.5) * 80}px`;
       const riseY = `${-80 - Math.random() * 100}px`;
@@ -90,14 +73,9 @@ export default function CursorTorch({ visibleAfterLoading }: CursorTorchProps) {
 
       spark.style.left = `${x + offsetWordX}px`;
       spark.style.top = `${y + offsetWordY}px`;
-      
-      // Make visible
-      spark.classList.remove("hidden");
-      
-      // Hide after animation finishes instead of removing from DOM
-      setTimeout(() => {
-        spark.classList.add("hidden");
-      }, 1500);
+
+      sparksContainerRef.current.appendChild(spark);
+      setTimeout(() => spark.remove(), 1500);
     };
 
     // Main animation loop — lerp + 3D tilt
