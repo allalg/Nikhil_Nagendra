@@ -92,14 +92,14 @@ export default function CinematicCanvas({ onLoaded }: CinematicCanvasProps) {
     <div className="fixed inset-0 w-full h-full bg-black select-none overflow-hidden">
       <Canvas
         dpr={[1, 1.5]}
-        camera={{ position: [-4.0, 28.5, 4.5], fov: 70, near: 0.1, far: 50 }}
+        camera={{ position: [0, 29, 4.5], fov: 70, near: 0.1, far: 50 }}
         gl={{
           antialias: true,
           powerPreference: "high-performance",
           alpha: false,
         }}
         onCreated={({ camera }) => {
-          camera.lookAt(-4.0, 28.5, 0);
+          camera.lookAt(0, 29, 0);
           setTimeout(() => onLoaded(), 800);
         }}
         className="w-full h-full pointer-events-auto cursor-none"

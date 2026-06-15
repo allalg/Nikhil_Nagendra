@@ -182,7 +182,7 @@ export default function CursorTorch({ visibleAfterLoading }: CursorTorchProps) {
         className="absolute left-0 top-0 w-48 h-64 pointer-events-none transition-opacity duration-500 select-none"
         style={{
           marginLeft: "-48px",
-          marginTop: "-70px", // Aligns the metal torch tip perfectly with the actual mouse pointer
+          marginTop: "-20px",
           willChange: "transform",
         }}
       >

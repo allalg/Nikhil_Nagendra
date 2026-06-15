@@ -12,7 +12,7 @@ export default function AtmosphericOverlay({ visibleAfterLoading }: AtmosphericO
   const [isVisible, setIsVisible] = useState(false);
   const [isAudioPlaying, setIsAudioPlaying] = useState(false);
 
-  const audioSynthRef = useRef<{ start: () => void; stop: () => void } | null>(null);
+  const audioSynthRef = useRef<any>(null);
 
   // DOM refs for imperative updates driven by scrollProgressRef
   const heroHintRef = useRef<HTMLDivElement>(null);
@@ -55,12 +55,12 @@ export default function AtmosphericOverlay({ visibleAfterLoading }: AtmosphericO
       private ctx: AudioContext | null = null;
       private gainNode: GainNode | null = null;
       private isPlaying = false;
-      private crackleInterval: ReturnType<typeof setInterval> | null = null;
+      private crackleInterval: any = null;
 
       start() {
         if (this.isPlaying) return;
         try {
-          const AudioContextClass = window.AudioContext || (window as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+          const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
           this.ctx = new AudioContextClass();
           this.gainNode = this.ctx.createGain();
           this.gainNode.gain.setValueAtTime(0.4, this.ctx.currentTime); // Master volume up

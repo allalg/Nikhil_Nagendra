@@ -16,7 +16,7 @@ interface CaveNavProps {
 
 export default function CaveNav({ sections, onNavigate, visible }: CaveNavProps) {
   const [isVisible, setIsVisible] = useState(false);
-
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   // Refs for each dot element — we'll imperatively update styles in rAF
   const dotRefs = useRef<(HTMLDivElement | null)[]>([]);

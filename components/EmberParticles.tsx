@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useMemo, useEffect } from "react";
+import { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { torchPosRef } from "./torchState";
@@ -84,40 +84,6 @@ const EmberShader = {
   `
 };
 
-
-// Helper to initialize a single ember (defined outside component to satisfy React purity rules)
-const createEmber = (torchRef: React.MutableRefObject<THREE.Vector3>, ember: Partial<Ember> = {}): Ember => {
-  const torchPos = torchRef.current;
-  const isTorchSpawn = Math.random() > 0.6; // 40% sparks from torch, 60% global floor ascent
-  
-  const x = isTorchSpawn 
-    ? torchPos.x + (Math.random() - 0.5) * 0.3
-    : (Math.random() - 0.5) * 16;
-    
-  const y = isTorchSpawn 
-    ? torchPos.y + (Math.random() - 0.5) * 0.3
-    : -10 + Math.random() * 2; // Rise from bottom
-
-  const z = isTorchSpawn
-    ? torchPos.z + (Math.random() - 0.5) * 0.2
-    : 0.1 + Math.random() * 0.8; // Float slightly in front of the wall
-
-  return {
-    x,
-    y,
-    z,
-    vx: (Math.random() - 0.5) * 0.25,
-    vy: 0.35 + Math.random() * 0.45, // Vertical ascent speed
-    vz: (Math.random() - 0.5) * 0.1,
-    age: 0,
-    life: 2.2 + Math.random() * 3.8, // 2.2 to 6 seconds lifetime
-    size: 0.045 + Math.random() * 0.075, // delicate, tiny embers
-    phase: Math.random() * Math.PI * 2,
-    spawnType: isTorchSpawn ? "torch" : "bottom",
-    ...ember
-  };
-};
-
 export default function EmberParticles() {
   const count = 50; // Restrained count for premium elegance
   const pointsRef = useRef<THREE.Points>(null);
@@ -132,16 +98,48 @@ export default function EmberParticles() {
   // Keep track of the ember objects in a mutable ref array
   const embers = useRef<Ember[]>([]);
 
-  // Initialize embers array outside the render phase
-  useEffect(() => {
-    if (embers.current.length === 0) {
-      for (let i = 0; i < count; i++) {
-        const ember = createEmber(torchPosRef, {});
-        ember.age = Math.random() * ember.life; // Pre-warm the particle system
-        embers.current.push(ember);
-      }
+  // Helper to initialize a single ember — reads torch position from shared ref
+  const resetEmber = (ember: Partial<Ember> = {}): Ember => {
+    const torchPos = torchPosRef.current;
+    const isTorchSpawn = Math.random() > 0.6; // 40% sparks from torch, 60% global floor ascent
+    
+    const x = isTorchSpawn 
+      ? torchPos.x + (Math.random() - 0.5) * 0.3
+      : (Math.random() - 0.5) * 16;
+      
+    const y = isTorchSpawn 
+      ? torchPos.y + (Math.random() - 0.5) * 0.3
+      : -10 + Math.random() * 2; // Rise from bottom
+ 
+    const z = isTorchSpawn
+      ? torchPos.z + (Math.random() - 0.5) * 0.2
+      : 0.1 + Math.random() * 0.8; // Float slightly in front of the wall
+
+    return {
+      x,
+      y,
+      z,
+      vx: (Math.random() - 0.5) * 0.25,
+      vy: 0.35 + Math.random() * 0.45, // Vertical ascent speed
+      vz: (Math.random() - 0.5) * 0.1,
+      age: 0,
+      life: 2.2 + Math.random() * 3.8, // 2.2 to 6 seconds lifetime
+      size: 0.045 + Math.random() * 0.075, // delicate, tiny embers
+      phase: Math.random() * Math.PI * 2,
+      spawnType: isTorchSpawn ? "torch" : "bottom",
+      ...ember
+    };
+  };
+
+  // Initialize embers array on first run
+  if (embers.current.length === 0) {
+    for (let i = 0; i < count; i++) {
+      // Stagger start times by randomizing initial age
+      const ember = resetEmber({});
+      ember.age = Math.random() * ember.life; // Pre-warm the particle system
+      embers.current.push(ember);
     }
-  }, [count]);
+  }
 
   useFrame((state) => {
     const time = state.clock.getElapsedTime();

@@ -11,7 +11,6 @@ export default function DecodeHandwriting() {
     if (isOpen) {
       requestAnimationFrame(() => setVisible(true));
     } else {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setVisible(false);
     }
   }, [isOpen]);
@@ -211,7 +210,7 @@ export default function DecodeHandwriting() {
               <Q>&ldquo;We must be willing to let go of the life we planned so as to have the life that is waiting for us.&rdquo;</Q>
               <A>— Joseph Campbell</A>
               <Spacer />
-              <Q>&ldquo;In a day, when you don&apos;t come across any problems - you can be sure that you are travelling in a wrong path.&rdquo;</Q>
+              <Q>&ldquo;In a day, when you don't come across any problems - you can be sure that you are travelling in a wrong path.&rdquo;</Q>
               <A>— Swami Vivekananda</A>
               <Spacer />
               <I>ideas kept me alive longer than certainty did.</I>
