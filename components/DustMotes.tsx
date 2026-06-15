@@ -86,32 +86,34 @@ const DustShader = {
   `
 };
 
+const generateDustMotes = (count: number) => {
+  const pos = new Float32Array(count * 3);
+  const ph = new Float32Array(count * 3);
+  const sz = new Float32Array(count);
+
+  for (let i = 0; i < count; i++) {
+    const i3 = i * 3;
+    pos[i3]     = (Math.random() - 0.5) * 18;      // X — lateral spread
+    pos[i3 + 1] = (Math.random() - 0.5) * 55;      // Y — full 52-unit vertical coverage + margin
+    pos[i3 + 2] = 0.1 + Math.random() * 1.5;       // Z — float in front of wall
+
+    ph[i3]     = Math.random() * Math.PI * 2;
+    ph[i3 + 1] = Math.random() * Math.PI * 2;
+    ph[i3 + 2] = Math.random() * Math.PI * 2;
+
+    sz[i] = 0.05 + Math.random() * 0.12;
+  }
+
+  return [pos, ph, sz];
+};
+
 export default function DustMotes() {
   const count = 180; // Increased for full 52-unit vertical coverage
   const pointsRef = useRef<THREE.Points>(null);
   const materialRef = useRef<THREE.ShaderMaterial>(null);
 
   // Generate stable position, phase, and size buffers
-  const [positions, phases, sizes] = useMemo(() => {
-    const pos = new Float32Array(count * 3);
-    const ph = new Float32Array(count * 3);
-    const sz = new Float32Array(count);
-
-    for (let i = 0; i < count; i++) {
-      const i3 = i * 3;
-      pos[i3]     = (Math.random() - 0.5) * 18;      // X — lateral spread
-      pos[i3 + 1] = (Math.random() - 0.5) * 55;      // Y — full 52-unit vertical coverage + margin
-      pos[i3 + 2] = 0.1 + Math.random() * 1.5;       // Z — float in front of wall
-
-      ph[i3]     = Math.random() * Math.PI * 2;
-      ph[i3 + 1] = Math.random() * Math.PI * 2;
-      ph[i3 + 2] = Math.random() * Math.PI * 2;
-
-      sz[i] = 0.05 + Math.random() * 0.12;
-    }
-
-    return [pos, ph, sz];
-  }, [count]);
+  const [positions, phases, sizes] = useMemo(() => generateDustMotes(count), [count]);
 
   useFrame(({ clock }) => {
     if (!materialRef.current) return;

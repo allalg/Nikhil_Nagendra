@@ -216,7 +216,7 @@ function buildStoneTextures(def: PanelDef) {
       normalImgData.data[idx+2] = Math.floor((1.0/len * 0.5 + 0.5) * 255);
       normalImgData.data[idx+3] = 255;
 
-      let roughnessVal = Math.min(Math.max(0.96 - h * 0.04 + (fastRandom() - 0.5) * 0.04, 0.92), 1.0);
+      const roughnessVal = Math.min(Math.max(0.96 - h * 0.04 + (fastRandom() - 0.5) * 0.04, 0.92), 1.0);
       roughnessImgData.data[idx] = roughnessImgData.data[idx+1] = roughnessImgData.data[idx+2] = Math.floor(roughnessVal * 255);
       roughnessImgData.data[idx+3] = 255;
 
@@ -292,8 +292,6 @@ function StonePanel({ def }: { def: PanelDef }) {
     const segsY = Math.max(16, Math.round(def.height * 3.7));
     const geom = new THREE.PlaneGeometry(def.width, def.height, segsX, segsY);
     const pos = geom.attributes.position;
-    const halfW = def.width / 2;
-    const halfH = def.height / 2;
     for (let i = 0; i < pos.count; i++) {
       const lx = pos.getX(i); // local x: -halfW to +halfW
       const ly = pos.getY(i); // local y: -halfH to +halfH

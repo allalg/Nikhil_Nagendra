@@ -72,8 +72,10 @@ function SconceUnit({
   const innerGeo = useMemo(() => makeFlameGeo(0.58), []);
 
   // Track lit state in a ref so useFrame doesn't need a closure over isLit
-  const isLitRef = useRef(false);
-  isLitRef.current = isLit;
+  const isLitRef = useRef(isLit);
+  useEffect(() => {
+    isLitRef.current = isLit;
+  }, [isLit]);
 
   useFrame(({ clock }) => {
     const t = clock.getElapsedTime();
@@ -247,14 +249,14 @@ function SconceUnit({
         {/* Ember pool */}
         <mesh ref={emberPoolRef} position={[0, flameY - 0.06, flameZ]}>
           <cylinderGeometry args={[0.090, 0.090, 0.04, 12]} />
-          <meshStandardMaterial color="#ff1400" emissive="#dd0800" emissiveIntensity={8} />
+          <meshStandardMaterial color="#ff1400" emissive="#dd0800" emissiveIntensity={15} />
         </mesh>
 
         {/* Outer flame — LatheGeometry silhouette */}
         <mesh ref={outerFlameRef} position={[0, flameY, flameZ]} scale={[0.50, 0.72, 0.38]}>
           <primitive object={outerGeo} />
           <meshStandardMaterial
-            color="#ff4400" emissive="#dd2200" emissiveIntensity={15}
+            color="#ff4400" emissive="#dd2200" emissiveIntensity={25}
             transparent opacity={0.88} side={THREE.DoubleSide} depthWrite={false}
           />
         </mesh>
@@ -263,7 +265,7 @@ function SconceUnit({
         <mesh ref={innerFlameRef} position={[0, flameY + 0.02, flameZ]} scale={[0.30, 0.65, 0.22]}>
           <primitive object={innerGeo} />
           <meshStandardMaterial
-            color="#ffcc00" emissive="#ffaa00" emissiveIntensity={25}
+            color="#ffcc00" emissive="#ffaa00" emissiveIntensity={45}
             transparent opacity={0.93} side={THREE.DoubleSide} depthWrite={false}
           />
         </mesh>
@@ -271,7 +273,7 @@ function SconceUnit({
         {/* White-hot tip */}
         <mesh ref={tipRef} position={[0, flameY + 0.62, flameZ]}>
           <sphereGeometry args={[0.025, 8, 8]} />
-          <meshStandardMaterial color="#ffffff" emissive="#fffff0" emissiveIntensity={18} />
+          <meshStandardMaterial color="#ffffff" emissive="#fffff0" emissiveIntensity={25} />
         </mesh>
       </group>
 
@@ -301,8 +303,10 @@ function SconceUnit({
 // ─────────────────────────────────────────────────────────────────────────────
 export default function WallSconces() {
   const [litSet, setLitSet] = useState<Set<number>>(new Set());
-  const litSetRef = useRef<Set<number>>(new Set());
-  litSetRef.current = litSet;
+  const litSetRef = useRef<Set<number>>(litSet);
+  useEffect(() => {
+    litSetRef.current = litSet;
+  }, [litSet]);
 
   const { camera, gl } = useThree();
 

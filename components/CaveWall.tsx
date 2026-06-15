@@ -174,7 +174,7 @@ export default function CaveWall() {
           normalImgData.data[idx + 1] = Math.floor((-dy2 / len * 0.5 + 0.5) * 255);
           normalImgData.data[idx + 2] = Math.floor((1.0 / len * 0.5 + 0.5) * 255);
           normalImgData.data[idx + 3] = 255;
-          let roughnessVal = Math.min(Math.max(0.96 - h * 0.04 + (fastRandom() - 0.5) * 0.04, 0.92), 1.0);
+          const roughnessVal = Math.min(Math.max(0.96 - h * 0.04 + (fastRandom() - 0.5) * 0.04, 0.92), 1.0);
           roughnessImgData.data[idx] = roughnessImgData.data[idx + 1] = roughnessImgData.data[idx + 2] = Math.floor(roughnessVal * 255);
           roughnessImgData.data[idx + 3] = 255;
           const strataY = strataYMap[fIdx];
@@ -292,9 +292,7 @@ export default function CaveWall() {
               ctx.strokeText(text, x, y);
 
               ctx.fillStyle = "rgba(0,0,0,1.0)";
-              ctx.fillText(text, x, y);
-              ctx.fillText(text, x, y); // drawing twice solidifies anti-aliased edges
-            }
+              for(let i=0; i<6; i++) ctx.fillText(text, x, y); // drawing multiple times solidifies blackness without widening
           };
           draw(aC, false); draw(rC, true);
         };
@@ -363,7 +361,7 @@ export default function CaveWall() {
           const r = size / 2; drawWobblyBox(aC, rC, cx - r, cy - r, size, size, 1.0);
           drawWobblyText(aC, rC, "in", cx - 5, cy + 4, 'bold 11px sans-serif');
         };
-        const drawGithubIcon = (aC: CanvasRenderingContext2D, rC: CanvasRenderingContext2D, cx: number, cy: number, size = 18) => {
+        const drawGithubIcon = (aC: CanvasRenderingContext2D, rC: CanvasRenderingContext2D, cx: number, cy: number) => {
           drawWobblyCurve(aC, rC, [[cx - 6, cy], [cx - 6, cy - 6], [cx + 6, cy - 6], [cx + 6, cy]], 1.2);
           drawWobblyCurve(aC, rC, [[cx - 6, cy], [cx, cy + 5], [cx + 6, cy]], 1.2);
           drawWobblyCurve(aC, rC, [[cx - 5, cy - 6], [cx - 8, cy - 11], [cx - 2, cy - 6]], 1.0);
@@ -452,13 +450,6 @@ export default function CaveWall() {
           const r = size / 2;
           drawWobblyLine(aC, rC, cx - r, cy - r, cx + r - 4, cy + r - 4, 1.5);
           drawWobblyCurve(aC, rC, [[cx + r - 4, cy + r - 4], [cx + r, cy + r], [cx + r - 5, cy + r + 2], [cx + r - 2, cy + r - 4]], 1.0);
-        };
-        const drawBookIcon = (aC: CanvasRenderingContext2D, rC: CanvasRenderingContext2D, cx: number, cy: number, size = 18) => {
-          const r = size / 2;
-          drawWobblyBox(aC, rC, cx - r, cy - r, size, size, 1.2);
-          drawWobblyLine(aC, rC, cx - 2, cy - r, cx - 2, cy + r, 1.0);
-          drawWobblyLine(aC, rC, cx - r + 3, cy - 4, cx - 4, cy - 4, 0.8);
-          drawWobblyLine(aC, rC, cx - r + 3, cy + 2, cx - 4, cy + 2, 0.8);
         };
 
         // ── TYPOGRAPHY SIZES — using the user's personal Myfont handwriting ──
@@ -934,7 +925,7 @@ export default function CaveWall() {
       // once this function returns. But explicitly clearing references in the
       // closure helps V8 collect them sooner.)
     } // end buildTextures
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   const geometry = useMemo(() => {
     // 20 wide × 65 tall — width matches camera FOV at z=4.5 with some bleed.
