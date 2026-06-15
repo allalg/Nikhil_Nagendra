@@ -239,9 +239,12 @@ export default function ProjectPreview({ visible }: ProjectPreviewProps) {
     >
       {/* Invisible hover zones positioned over each project title */}
       {PROJECTS.map((project, i) => (
-        <div
+        <a
           key={project.name}
           ref={(el) => { zoneRefs.current[i] = el; }}
+          href={project.link}
+          target="_blank"
+          rel="noopener noreferrer"
           className="absolute pointer-events-auto cursor-pointer"
           style={{ 
             display: "none",
@@ -261,10 +264,9 @@ export default function ProjectPreview({ visible }: ProjectPreviewProps) {
             e.currentTarget.style.color = "transparent";
             e.currentTarget.style.textShadow = "none";
           }}
-          onClick={() => window.open(project.link, "_blank", "noopener,noreferrer")}
         >
           {project.name}
-        </div>
+        </a>
       ))}
 
       {/* Preview popup — viewport-clamped positioning */}
