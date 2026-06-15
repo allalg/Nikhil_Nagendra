@@ -139,12 +139,9 @@ export default function CursorTorch({ visibleAfterLoading }: CursorTorchProps) {
         svgRef.current.style.transform = `skewY(${sk}deg)`;
       }
 
-      // Dynamic shadow based on tilt
-      if (torchBodyRef.current) {
-        const shadowX = (tiltRef.current.rotateY * 0.5).toFixed(1);
-        const shadowY = (6 - tiltRef.current.rotateX * 0.3).toFixed(1);
-        torchBodyRef.current.style.filter = `drop-shadow(${shadowX}px ${shadowY}px 10px rgba(0,0,0,0.85))`;
-      }
+      // Dynamic shadow removed for performance: updating CSS drop-shadow
+      // in a 60fps loop forces the browser to constantly rasterize the SVG.
+      // A static shadow is applied to the SVG below instead.
 
       // Spawn embers
       const now = performance.now();
@@ -248,6 +245,7 @@ export default function CursorTorch({ visibleAfterLoading }: CursorTorchProps) {
             style={{
               transformOrigin: "48px 86px",
               willChange: "transform",
+              filter: "drop-shadow(2px 6px 10px rgba(0,0,0,0.85))",
             }}
           >
             <defs>
