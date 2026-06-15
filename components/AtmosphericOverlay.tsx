@@ -197,24 +197,29 @@ export default function AtmosphericOverlay({ visibleAfterLoading }: AtmosphericO
         style={{ left: "1.5%", bottom: "3%" }}
         aria-label={isAudioPlaying ? "Mute cave ambience" : "Play cave ambience"}
       >
-        <div className="flex items-center gap-1.5 text-amber-200/35 group-hover:text-amber-200/65 transition-colors duration-500 bg-black/20 rounded-md px-2 py-1 backdrop-blur-sm border border-transparent group-hover:border-amber-900/30">
+        <div className="relative flex items-center gap-2 text-amber-50 group-hover:text-white transition-all duration-300 bg-amber-900/60 group-hover:bg-amber-800/80 rounded-md px-4 py-2.5 backdrop-blur-md border border-amber-500/60 group-hover:border-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.4)]">
+          {/* Catchy Sonar Ping (only when muted) */}
+          {!isAudioPlaying && (
+            <div className="absolute inset-0 rounded-md border-2 border-amber-400 animate-ping opacity-75 pointer-events-none"></div>
+          )}
+          
           {isAudioPlaying ? (
             /* Sound waves */
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.2">
-              <path d="M1 5.5v5l3-2v-1l-3-2z" fill="currentColor" stroke="none" opacity="0.8"/>
+            <svg width="22" height="22" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="relative z-10">
+              <path d="M1 5.5v5l3-2v-1l-3-2z" fill="currentColor" stroke="none" opacity="0.9"/>
               <path d="M4 5.5v5" />
               <path d="M6.5 3.5c1.5 1 2.5 2.7 2.5 4.5s-1 3.5-2.5 4.5" />
               <path d="M9.5 2c2 1.5 3.5 3.7 3.5 6s-1.5 4.5-3.5 6" />
             </svg>
           ) : (
             /* Muted */
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.2">
-              <path d="M1 5.5v5l3-2v-1l-3-2z" fill="currentColor" stroke="none" opacity="0.8"/>
+            <svg width="22" height="22" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="relative z-10">
+              <path d="M1 5.5v5l3-2v-1l-3-2z" fill="currentColor" stroke="none" opacity="0.9"/>
               <path d="M4 5.5v5" />
               <path d="M8 5l4 6M12 5l-4 6" />
             </svg>
           )}
-          <span className="text-[9px] tracking-widest uppercase opacity-70">
+          <span className="text-[12px] font-bold tracking-widest uppercase opacity-100 drop-shadow-md relative z-10">
             {isAudioPlaying ? "cave sound on" : "cave sound off"}
           </span>
         </div>
