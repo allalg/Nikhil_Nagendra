@@ -795,7 +795,7 @@ export default function CaveWall() {
 
         // Waypoint 4: Engineering
         drawLaptopIcon(albedoCtx, finalRoughnessCtx, 855, 1715, 22);
-        drawWobblyText(albedoCtx, finalRoughnessCtx, "B.TECH CSE", 828, 1685, H3);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "B.E CSE", 828, 1685, H3);
         drawWobblyText(albedoCtx, finalRoughnessCtx, "building now.", 820, 1800, B);
         drawWobblyText(albedoCtx, finalRoughnessCtx, "a better direction.", 820, 1818, B);
         drawStickFigure(albedoCtx, finalRoughnessCtx, 895, 1740, 16, 0.7);
