@@ -133,10 +133,6 @@ export default function ContactLinks() {
             e.currentTarget.style.color = "transparent";
             e.currentTarget.style.textShadow = "none";
           }}
-          onClick={(e) => {
-            e.preventDefault();
-            window.open(link.href, "_blank", "noopener,noreferrer");
-          }}
         >
           {link.label}
         </a>
