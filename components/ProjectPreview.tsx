@@ -106,7 +106,7 @@ export default function ProjectPreview({ visible }: ProjectPreviewProps) {
   const [hoveredProject, setHoveredProject] = useState<ProjectDef | null>(null);
   const [popupPos, setPopupPos] = useState({ x: 0, y: 0, below: false });
   const hoveredIdxRef = useRef<number>(-1);
-  const zoneRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const zoneRefs = useRef<(HTMLAnchorElement | null)[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const frameId = useRef<number | null>(null);
 
