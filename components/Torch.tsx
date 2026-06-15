@@ -30,7 +30,7 @@ export default function Torch({ baseIntensity = 22 }: TorchProps) {
     targetPos.current.y = camera.position.y + (pointer.y * viewport.height) / 2;
     targetPos.current.z = 2.5;
 
-    smoothPos.current.lerp(targetPos.current, 0.042);
+    smoothPos.current.lerp(targetPos.current, 0.25);
 
     const driftX = Math.sin(time * 0.8) * 0.02;
     const driftY = Math.cos(time * 0.65) * 0.015;

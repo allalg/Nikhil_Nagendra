@@ -83,9 +83,9 @@ export default function CursorTorch({ visibleAfterLoading }: CursorTorchProps) {
       const targetX = mouseRef.current.x;
       const targetY = mouseRef.current.y;
 
-      // Smooth lerp (same 0.042 factor as 3D Torch light)
-      currentRef.current.x += (targetX - currentRef.current.x) * 0.042;
-      currentRef.current.y += (targetY - currentRef.current.y) * 0.042;
+      // Snappy but smooth lerp (syncs with 3D Torch light)
+      currentRef.current.x += (targetX - currentRef.current.x) * 0.25;
+      currentRef.current.y += (targetY - currentRef.current.y) * 0.25;
 
       // Velocity for 3D tilt
       const vx = currentRef.current.x - prevRef.current.x;
