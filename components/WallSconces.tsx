@@ -6,30 +6,33 @@ import * as THREE from "three";
 import { torchPosRef } from "./torchState";
 
 const SCONCES: { id: number; pos: [number, number, number] }[] = [
-  { id: 0,  pos: [-3.8,  22.5, 0.0] },
-  { id: 1,  pos: [ 3.8,  22.5, 0.0] },
-  { id: 2,  pos: [-4.2,  11.0, 0.0] },
-  { id: 3,  pos: [ 4.2,  11.0, 0.0] },
-  { id: 4,  pos: [-3.8,   1.0, 0.0] },
-  { id: 5,  pos: [ 3.8,   1.0, 0.0] },
-  { id: 6,  pos: [-4.2,  -9.5, 0.0] },
-  { id: 7,  pos: [ 4.2,  -9.5, 0.0] },
-  { id: 8,  pos: [-3.8, -17.5, 0.0] },
-  { id: 9,  pos: [ 3.8, -17.5, 0.0] },
-  { id: 10, pos: [ 0.0, -23.0, 0.0] },
+  { id: 0, pos: [-2.5, 28.5, 0.0] },
+  { id: 1, pos: [-3.8, 21.5, 0.0] },
+  { id: 2, pos: [3.8, 22.5, 0.0] },
+  { id: 3, pos: [-4.2, 10.0, 0.0] },
+  { id: 4, pos: [4.2, 11.0, 0.0] },
+  { id: 5, pos: [-3.8, -1.0, 0.0] },
+  { id: 6, pos: [3.8, -1.0, 0.0] },
+  { id: 7, pos: [-2.2, -9.5, 0.0] },
+  { id: 8, pos: [5.2, -9.5, 0.0] },
+  { id: 9, pos: [-3.8, -17.5, 0.0] },
+  { id: 10, pos: [3.8, -19.5, 0.0] },
+  { id: 11, pos: [-1.2, -24.5, 0.0] },
+  { id: 12, pos: [6.2, -26.0, 0.0] },
+  { id: 13, pos: [0.0, -30.0, 0.0] },
 ];
 
 // LatheGeometry profile — classic torch flame silhouette
 // (wide belly at y≈0.28, tapers to sharp tip at y=1.0)
 function makeFlameGeo(widthScale: number) {
   return new THREE.LatheGeometry([
-    new THREE.Vector2(0.00,                0.00),
-    new THREE.Vector2(0.52 * widthScale,   0.10),
-    new THREE.Vector2(0.68 * widthScale,   0.28),
-    new THREE.Vector2(0.58 * widthScale,   0.50),
-    new THREE.Vector2(0.38 * widthScale,   0.68),
-    new THREE.Vector2(0.18 * widthScale,   0.85),
-    new THREE.Vector2(0.00,                1.00),
+    new THREE.Vector2(0.00, 0.00),
+    new THREE.Vector2(0.52 * widthScale, 0.10),
+    new THREE.Vector2(0.68 * widthScale, 0.28),
+    new THREE.Vector2(0.58 * widthScale, 0.50),
+    new THREE.Vector2(0.38 * widthScale, 0.68),
+    new THREE.Vector2(0.18 * widthScale, 0.85),
+    new THREE.Vector2(0.00, 1.00),
   ], 14);
 }
 
@@ -49,18 +52,18 @@ function SconceUnit({
   isLit: boolean;
 }) {
   // ── All refs — manipulated in useFrame only, never in React render ─────────
-  const flameGroupRef  = useRef<THREE.Group>(null);
-  const outerFlameRef  = useRef<THREE.Mesh>(null);
-  const innerFlameRef  = useRef<THREE.Mesh>(null);
-  const tipRef         = useRef<THREE.Mesh>(null);
-  const emberPoolRef   = useRef<THREE.Mesh>(null);
-  const cupRef         = useRef<THREE.Mesh>(null);       // cup rim — glows red
+  const flameGroupRef = useRef<THREE.Group>(null);
+  const outerFlameRef = useRef<THREE.Mesh>(null);
+  const innerFlameRef = useRef<THREE.Mesh>(null);
+  const tipRef = useRef<THREE.Mesh>(null);
+  const emberPoolRef = useRef<THREE.Mesh>(null);
+  const cupRef = useRef<THREE.Mesh>(null);       // cup rim — glows red
   // Lights — always in scene, intensity=0 when unlit
-  const mainLightRef   = useRef<THREE.PointLight>(null);
-  const baseLightRef   = useRef<THREE.PointLight>(null);
+  const mainLightRef = useRef<THREE.PointLight>(null);
+  const baseLightRef = useRef<THREE.PointLight>(null);
   // Ember indicators
-  const dimEmberRef    = useRef<THREE.Mesh>(null);
-  const readyEmberRef  = useRef<THREE.Mesh>(null);
+  const dimEmberRef = useRef<THREE.Mesh>(null);
+  const readyEmberRef = useRef<THREE.Mesh>(null);
 
   const posVec = useRef(new THREE.Vector3(...position));
 
@@ -73,8 +76,8 @@ function SconceUnit({
   isLitRef.current = isLit;
 
   useFrame(({ clock }) => {
-    const t    = clock.getElapsedTime();
-    const lit  = isLitRef.current;
+    const t = clock.getElapsedTime();
+    const lit = isLitRef.current;
     const dist = torchPosRef.current.distanceTo(posVec.current);
     const near = dist < 5.5;
 
@@ -88,7 +91,7 @@ function SconceUnit({
     }
 
     // ── Ember indicators ─────────────────────────────────────────────────────
-    if (dimEmberRef.current)   dimEmberRef.current.visible   = !lit && !near;
+    if (dimEmberRef.current) dimEmberRef.current.visible = !lit && !near;
     if (readyEmberRef.current) readyEmberRef.current.visible = !lit && near;
 
     // ── Lights: zero intensity when unlit, flickering when lit ───────────────
@@ -129,15 +132,15 @@ function SconceUnit({
 
     // ── LIGHT FLICKER ────────────────────────────────────────────────────────
     const f = 1 + Math.sin(t * 6.3) * 0.18 + (Math.random() - 0.5) * 0.10;
-    mainLightRef.current.intensity = 38 * f;
+    mainLightRef.current.intensity = 60 * f;
     mainLightRef.current.color.setHSL(
       0.07 + Math.sin(t * 0.7) * 0.012, 0.97,
       0.50 + Math.sin(t * 3.1) * 0.05,
     );
-    baseLightRef.current.intensity = 14 + Math.sin(t * 1.2) * 2.5;
+    baseLightRef.current.intensity = 25 + Math.sin(t * 1.2) * 5.0;
   });
 
-  const cupZ   = 0.48;
+  const cupZ = 0.48;
   const flameY = 0.38;
   const flameZ = cupZ;
 
@@ -177,11 +180,11 @@ function SconceUnit({
       {/* Diagonal support arm */}
       {(() => {
         const start = new THREE.Vector3(0, -0.28, 0.08);
-        const end   = new THREE.Vector3(0,  0.00, 0.50);
-        const mid   = start.clone().add(end).multiplyScalar(0.5);
-        const dir   = end.clone().sub(start);
-        const len   = dir.length();
-        const quat  = new THREE.Quaternion().setFromUnitVectors(
+        const end = new THREE.Vector3(0, 0.00, 0.50);
+        const mid = start.clone().add(end).multiplyScalar(0.5);
+        const dir = end.clone().sub(start);
+        const len = dir.length();
+        const quat = new THREE.Quaternion().setFromUnitVectors(
           new THREE.Vector3(0, 1, 0), dir.normalize()
         );
         return (
@@ -251,7 +254,7 @@ function SconceUnit({
         <mesh ref={outerFlameRef} position={[0, flameY, flameZ]} scale={[0.50, 0.72, 0.38]}>
           <primitive object={outerGeo} />
           <meshStandardMaterial
-            color="#ff4400" emissive="#dd2200" emissiveIntensity={5}
+            color="#ff4400" emissive="#dd2200" emissiveIntensity={15}
             transparent opacity={0.88} side={THREE.DoubleSide} depthWrite={false}
           />
         </mesh>
@@ -260,7 +263,7 @@ function SconceUnit({
         <mesh ref={innerFlameRef} position={[0, flameY + 0.02, flameZ]} scale={[0.30, 0.65, 0.22]}>
           <primitive object={innerGeo} />
           <meshStandardMaterial
-            color="#ffcc00" emissive="#ffaa00" emissiveIntensity={9}
+            color="#ffcc00" emissive="#ffaa00" emissiveIntensity={25}
             transparent opacity={0.93} side={THREE.DoubleSide} depthWrite={false}
           />
         </mesh>
@@ -307,8 +310,8 @@ export default function WallSconces() {
     const canvas = gl.domElement;
     const handleClick = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
-      const ndcX =  ((e.clientX - rect.left) / rect.width)  * 2 - 1;
-      const ndcY = -((e.clientY - rect.top)  / rect.height) * 2 + 1;
+      const ndcX = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      const ndcY = -((e.clientY - rect.top) / rect.height) * 2 + 1;
 
       SCONCES.forEach((s) => {
         if (litSetRef.current.has(s.id)) return;

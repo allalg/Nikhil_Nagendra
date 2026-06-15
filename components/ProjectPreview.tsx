@@ -67,7 +67,7 @@ const PROJECTS: ProjectDef[] = [
 // Convert canvas drawing coords → world 3D coords (on the z=0 wall plane)
 function canvasToWorld(cx: number, cy: number): [number, number] {
   const worldX = (cx / 1024) * 20 - 10;
-  const worldY = 26 - (cy / 2048) * 52;
+  const worldY = 32.5 - (cy / 2560) * 65;
   return [worldX, worldY];
 }
 
@@ -142,11 +142,12 @@ export default function ProjectPreview({ visible }: ProjectPreviewProps) {
         // Only show zones when they're within the viewport
         const onScreen = top > -100 && top < sh + 100 && left > -200 && left < sw + 200;
         if (onScreen) {
-          el.style.display = "block";
+          el.style.display = "flex";
           el.style.left = `${left}px`;
           el.style.top = `${top}px`;
           el.style.width = `${width}px`;
           el.style.height = `${height}px`;
+          el.style.fontSize = `${height * 0.75}px`;
         } else {
           el.style.display = "none";
           // If the hovered project goes off-screen, dismiss the popup
@@ -242,11 +243,28 @@ export default function ProjectPreview({ visible }: ProjectPreviewProps) {
           key={project.name}
           ref={(el) => { zoneRefs.current[i] = el; }}
           className="absolute pointer-events-auto cursor-pointer"
-          style={{ display: "none" }}
-          onMouseEnter={() => handleMouseEnter(project, i)}
-          onMouseLeave={handleMouseLeave}
+          style={{ 
+            display: "none",
+            alignItems: "center",
+            fontFamily: "Myfont, cursive",
+            color: "transparent",
+            transition: "all 0.3s ease",
+            whiteSpace: "nowrap"
+          }}
+          onMouseEnter={(e) => {
+            handleMouseEnter(project, i);
+            e.currentTarget.style.color = "rgb(100, 220, 255)";
+            e.currentTarget.style.textShadow = "0 0 10px rgba(0, 180, 255, 0.6)";
+          }}
+          onMouseLeave={(e) => {
+            handleMouseLeave();
+            e.currentTarget.style.color = "transparent";
+            e.currentTarget.style.textShadow = "none";
+          }}
           onClick={() => window.open(project.link, "_blank", "noopener,noreferrer")}
-        />
+        >
+          {project.name}
+        </div>
       ))}
 
       {/* Preview popup — viewport-clamped positioning */}

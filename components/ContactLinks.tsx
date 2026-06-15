@@ -5,10 +5,10 @@ import { cameraPosRef } from "./scrollState";
 
 // ── Link definitions ──────────────────────────────────────────────────────────
 // Canvas coordinates from CaveWall.tsx drawCharcoalMarkings (contact section).
-// Canvas is 1024×2048, mapped onto a 20×52 world-unit plane.
+// Canvas is 1024×2560, mapped onto a 20×65 world-unit plane.
 //
-// LinkedIn text:  drawWobblyText(..., "LinkedIn", 724, 1948, B)
-// GitHub text:    drawWobblyText(..., "GitHub — allalg", 724, 1980, B)
+// LinkedIn text:  drawWobblyText(..., "LinkedIn", 724, 2248, B)
+// GitHub text:    drawWobblyText(..., "GitHub — allalg", 724, 2280, B)
 
 interface LinkDef {
   label: string;
@@ -22,12 +22,12 @@ interface LinkDef {
 const CONTACT_LINKS: LinkDef[] = [
   {
     label: "LinkedIn",
-    canvasX: 700, canvasY: 1930, canvasW: 160, canvasH: 30,
+    canvasX: 700, canvasY: 2440, canvasW: 160, canvasH: 30,
     href: "https://www.linkedin.com/in/nikhil-nagendra-a89828160/",
   },
   {
     label: "GitHub — allalg",
-    canvasX: 700, canvasY: 1962, canvasW: 220, canvasH: 30,
+    canvasX: 700, canvasY: 2472, canvasW: 220, canvasH: 30,
     href: "https://github.com/allalg",
   },
 ];
@@ -35,7 +35,7 @@ const CONTACT_LINKS: LinkDef[] = [
 // Convert canvas drawing coords → world 3D coords
 function canvasToWorld(cx: number, cy: number): [number, number] {
   const worldX = (cx / 1024) * 20 - 10;
-  const worldY = 26 - (cy / 2048) * 52;
+  const worldY = 32.5 - (cy / 2560) * 65;
   return [worldX, worldY];
 }
 
@@ -122,6 +122,16 @@ export default function ContactLinks() {
             display: "none",
             alignItems: "center",
             fontFamily: "Myfont, cursive",
+            color: "transparent",
+            transition: "all 0.3s ease",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = "rgb(100, 220, 255)";
+            e.currentTarget.style.textShadow = "0 0 10px rgba(0, 180, 255, 0.6)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = "transparent";
+            e.currentTarget.style.textShadow = "none";
           }}
           onClick={(e) => {
             e.preventDefault();

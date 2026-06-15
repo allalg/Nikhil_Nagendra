@@ -16,10 +16,11 @@ const CinematicCanvas = dynamic(() => import("@/components/CinematicCanvas"), {
 
 const NAV_SECTIONS = [
   { label: "Hero",       progress: 0.0  },
-  { label: "About",      progress: 0.24 },
-  { label: "Projects",   progress: 0.47 },
-  { label: "Journey",    progress: 0.70 },
-  { label: "Philosophy", progress: 0.88 },
+  { label: "About",      progress: 0.19 },
+  { label: "Projects",   progress: 0.37 },
+  { label: "Skills",     progress: 0.52 },
+  { label: "Journey",    progress: 0.65 },
+  { label: "Philosophy", progress: 0.82 },
   { label: "Contact",    progress: 1.0  },
 ];
 

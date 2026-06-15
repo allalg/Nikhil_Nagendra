@@ -80,7 +80,8 @@ export default function DecodeHandwriting() {
               transform: visible ? "scale(1) translateY(0)" : "scale(0.92) translateY(20px)",
               opacity: visible ? 1 : 0,
               transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
-              cursor: "default",
+              cursor: "auto",
+              userSelect: "text",
               fontFamily: "Inter, system-ui, sans-serif",
               color: "rgba(230, 210, 175, 0.9)",
               scrollbarWidth: "thin",
@@ -172,7 +173,26 @@ export default function DecodeHandwriting() {
               <Project name="RAG ENGINE" desc="Vector + graph retrieval — ChromaDB meets NetworkX" note="documents finally make sense." />
             </Section>
 
-            <Section title="03 JOURNEY">
+            <Section title="03 SKILLS & ACHIEVEMENTS">
+              <I>tools. wins. proof of work.</I>
+              <Spacer />
+              <H>TOOLBOX</H>
+              <Project name="Systems & Architecture" desc="Dist Systems, Event-Driven, Agent-Based" note="" />
+              <Project name="Artificial Intelligence" desc="AI Agent Design, Prompt Eng, Gen AI Systems" note="" />
+              <Project name="Backend & Data" desc="SQL DB Design, REST APIs, Auth Systems" note="" />
+              <Project name="Security & Finance" desc="Threat Modeling, Cyber Fundamentals, Accounting & Finance Fundamentals" note="" />
+              <Project name="Engineering Core" desc="Python, JS/TS, C, React/Next" note="" />
+              <Spacer />
+              <H>MILESTONES</H>
+              <Project name="Gameathon — 3rd Place" desc="competitive game dev." note="" />
+              <Project name="CTF — 6th / 36 Teams" desc="cybersec & problem solving." note="" />
+              <Project name="Multiple Hackathons" desc="innovation & rapid prototyping." note="" />
+              <Project name="Himalayan Treks (x5)" desc="reached 5200m. nature >> code." note="" />
+              <Spacer />
+              <I>skills are just proof that you showed up.</I>
+            </Section>
+
+            <Section title="04 JOURNEY">
               <I>not a resume. a real path.</I>
               <Spacer />
               <Waypoint label="MBBS" desc="2 years of medicine. empathy carved deep." />
@@ -183,20 +203,20 @@ export default function DecodeHandwriting() {
               <I>some paths are straight. mine had plot twists. still a meaningful one.</I>
             </Section>
 
-            <Section title="04 PHILOSOPHY">
+            <Section title="05 PHILOSOPHY">
               <Q>&ldquo;We do not see things as they are. We see them as we are.&rdquo;</Q>
               <A>— Anaïs Nin</A>
               <Spacer />
-              <Q>&ldquo;The mind is everything. What you think, you become.&rdquo;</Q>
-              <A>— Gautama Buddha</A>
+              <Q>&ldquo;We must be willing to let go of the life we planned so as to have the life that is waiting for us.&rdquo;</Q>
+              <A>— Joseph Campbell</A>
               <Spacer />
-              <Q>&ldquo;Discipline is freedom.&rdquo;</Q>
-              <A>— Jocko Willink / Epictetus</A>
+              <Q>&ldquo;In a day, when you don't come across any problems - you can be sure that you are travelling in a wrong path.&rdquo;</Q>
+              <A>— Swami Vivekananda</A>
               <Spacer />
               <I>ideas kept me alive longer than certainty did.</I>
             </Section>
 
-            <Section title="05 CONTACT" last>
+            <Section title="06 CONTACT" last>
               <P>if you&apos;ve made it this far, let&apos;s build something cool together.</P>
               <Spacer />
               <P>✉ nikhilnag98@gmail.com</P>

@@ -63,7 +63,7 @@ export default function AtmosphericOverlay({ visibleAfterLoading }: AtmosphericO
           const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
           this.ctx = new AudioContextClass();
           this.gainNode = this.ctx.createGain();
-          this.gainNode.gain.setValueAtTime(0.06, this.ctx.currentTime);
+          this.gainNode.gain.setValueAtTime(0.4, this.ctx.currentTime); // Master volume up
           this.gainNode.connect(this.ctx.destination);
 
           const sampleRate = this.ctx.sampleRate;
@@ -73,9 +73,9 @@ export default function AtmosphericOverlay({ visibleAfterLoading }: AtmosphericO
           let lastOut = 0.0;
           for (let i = 0; i < bufferSize; i++) {
             const white = Math.random() * 2 - 1;
-            output[i] = (lastOut + 0.02 * white) / 1.02;
+            output[i] = (lastOut + 0.05 * white) / 1.05; // Slightly brighter noise
             lastOut = output[i];
-            output[i] *= 3.5;
+            output[i] *= 4.0;
           }
 
           const rumbleSource = this.ctx.createBufferSource();
@@ -83,7 +83,7 @@ export default function AtmosphericOverlay({ visibleAfterLoading }: AtmosphericO
           rumbleSource.loop = true;
           const rumbleFilter = this.ctx.createBiquadFilter();
           rumbleFilter.type = "lowpass";
-          rumbleFilter.frequency.setValueAtTime(55, this.ctx.currentTime);
+          rumbleFilter.frequency.setValueAtTime(150, this.ctx.currentTime); // Raised from 55Hz to 150Hz for laptop speakers
           rumbleSource.connect(rumbleFilter);
           rumbleFilter.connect(this.gainNode);
           rumbleSource.start(0);
@@ -101,7 +101,7 @@ export default function AtmosphericOverlay({ visibleAfterLoading }: AtmosphericO
 
       private playSparkCrackle() {
         if (!this.ctx || !this.gainNode) return;
-        const duration = 0.004 + Math.random() * 0.012;
+        const duration = 0.01 + Math.random() * 0.02; // Slightly longer crackle
         const sparkBuffer = this.ctx.createBuffer(1, this.ctx.sampleRate * duration, this.ctx.sampleRate);
         const data = sparkBuffer.getChannelData(0);
         for (let i = 0; i < sparkBuffer.length; i++) data[i] = Math.random() * 2 - 1;
@@ -109,11 +109,11 @@ export default function AtmosphericOverlay({ visibleAfterLoading }: AtmosphericO
         source.buffer = sparkBuffer;
         const filter = this.ctx.createBiquadFilter();
         filter.type = "bandpass";
-        filter.frequency.value = 1400 + Math.random() * 1100;
-        filter.Q.value = 5.0;
+        filter.frequency.value = 1200 + Math.random() * 1500;
+        filter.Q.value = 3.0; // Less resonant for a thicker snap
         const sparkGain = this.ctx.createGain();
-        sparkGain.gain.setValueAtTime(0.004 + Math.random() * 0.01, this.ctx.currentTime);
-        sparkGain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+        sparkGain.gain.setValueAtTime(0.8 + Math.random() * 0.5, this.ctx.currentTime); // Much louder crackle
+        sparkGain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + duration);
         source.connect(filter);
         filter.connect(sparkGain);
         sparkGain.connect(this.gainNode);
@@ -190,13 +190,14 @@ export default function AtmosphericOverlay({ visibleAfterLoading }: AtmosphericO
       </div>
 
       {/* ── AUDIO TOGGLE ── bottom-left, always visible ── */}
+      {/* Hitbox expanded drastically because the custom torch cursor makes precise clicking difficult */}
       <button
         onClick={handleAudioToggle}
-        className="absolute pointer-events-auto cursor-none"
-        style={{ left: "1.5%", bottom: "3%", padding: "6px 10px" }}
+        className="absolute pointer-events-auto cursor-none group p-8 -m-8"
+        style={{ left: "1.5%", bottom: "3%" }}
         aria-label={isAudioPlaying ? "Mute cave ambience" : "Play cave ambience"}
       >
-        <div className="flex items-center gap-1.5 text-amber-200/35 hover:text-amber-200/65 transition-colors duration-500">
+        <div className="flex items-center gap-1.5 text-amber-200/35 group-hover:text-amber-200/65 transition-colors duration-500 bg-black/20 rounded-md px-2 py-1 backdrop-blur-sm border border-transparent group-hover:border-amber-900/30">
           {isAudioPlaying ? (
             /* Sound waves */
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.2">

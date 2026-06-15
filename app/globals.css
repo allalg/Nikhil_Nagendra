@@ -159,6 +159,6 @@ canvas {
 }
 
 .contact-link-zone:hover {
-  color: rgb(217, 168, 80);
-  text-shadow: 0 0 8px rgba(200, 140, 40, 0.4);
+  color: rgb(100, 220, 255);
+  text-shadow: 0 0 10px rgba(0, 180, 255, 0.6);
 }

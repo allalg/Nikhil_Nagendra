@@ -68,14 +68,14 @@ const getGeology = (px: number, py: number) => {
 };
 
 // ── Panel definitions ─────────────────────────────────────────────────────────
-// Center wall: PlaneGeometry(20, 52) at origin.
-//   World x: -10 to +10,  world y: -26 to +26
-//   CaveWall maps pixel coords to noise with:  px = x/10  (-1 to 1),  py = y/26  (-1 to 1)
+// Center wall: PlaneGeometry(20, 65) at origin.
+//   World x: -10 to +10,  world y: -32.5 to +32.5
+//   CaveWall maps pixel coords to noise with:  px = x/10  (-1 to 1),  py = y/32.5  (-1 to 1)
 //
 // For surround panels, we sample noise in the SAME coordinate space so the
 // geology is continuous. Each panel defines its world-space bounds, and we
 // convert those to the center wall's noise coordinate space:
-//   noisePx = worldX / 10,   noisePy = worldY / 26
+//   noisePx = worldX / 10,   noisePy = worldY / 32.5
 
 interface PanelDef {
   // World-space position (centre of the panel mesh)
@@ -96,23 +96,23 @@ interface PanelDef {
 const PANELS: PanelDef[] = [
   // Left panel: worldX from -30 to -9 (1u overlap), full height
   {
-    position: [-19.5, 0, -0.08], width: 21, height: 52,
-    worldMinX: -30, worldMaxX: -9, worldMinY: -26, worldMaxY: 26,
+    position: [-19.5, 0, -0.08], width: 21, height: 65,
+    worldMinX: -30, worldMaxX: -9, worldMinY: -32.5, worldMaxY: 32.5,
   },
   // Right panel: worldX from +9 to +30 (1u overlap), full height
   {
-    position: [19.5, 0, -0.08], width: 21, height: 52,
-    worldMinX: 9, worldMaxX: 30, worldMinY: -26, worldMaxY: 26,
+    position: [19.5, 0, -0.08], width: 21, height: 65,
+    worldMinX: 9, worldMaxX: 30, worldMinY: -32.5, worldMaxY: 32.5,
   },
-  // Top panel: worldY from +25 to +46 (1u overlap), full width + side overlap
+  // Top panel: worldY from +31.5 to +52.5 (1u overlap), full width + side overlap
   {
-    position: [0, 35.5, -0.08], width: 62, height: 21,
-    worldMinX: -30, worldMaxX: 30, worldMinY: 25, worldMaxY: 46,
+    position: [0, 42, -0.08], width: 62, height: 21,
+    worldMinX: -30, worldMaxX: 30, worldMinY: 31.5, worldMaxY: 52.5,
   },
-  // Bottom panel: worldY from -46 to -25 (1u overlap), full width + side overlap
+  // Bottom panel: worldY from -52.5 to -31.5 (1u overlap), full width + side overlap
   {
-    position: [0, -35.5, -0.08], width: 62, height: 21,
-    worldMinX: -30, worldMaxX: 30, worldMinY: -46, worldMaxY: -25,
+    position: [0, -42, -0.08], width: 62, height: 21,
+    worldMinX: -30, worldMaxX: 30, worldMinY: -52.5, worldMaxY: -31.5,
   },
 ];
 
@@ -124,7 +124,7 @@ function buildStoneTextures(def: PanelDef) {
   const worldH = def.worldMaxY - def.worldMinY;
 
   // Match center wall density:  256 base px / 20 world units = 12.8 px/unit (X)
-  //                              512 base px / 52 world units = 9.85 px/unit (Y)
+  //                              640 base px / 65 world units = 9.85 px/unit (Y)
   // Use ~10 px/unit for both axes (good quality without being slow)
   const density = 10;
   const baseW = Math.round(worldW * density);
@@ -141,7 +141,7 @@ function buildStoneTextures(def: PanelDef) {
   //   noisePx = worldX / 10,  noisePy = worldY / 26
   for (let y = 0; y < baseH; y++) {
     const worldY = def.worldMinY + (y / (baseH - 1)) * worldH;
-    const py = worldY / 26;   // same as CaveWall: normY = y / 26
+    const py = worldY / 32.5;   // same as CaveWall: normY = y / 32.5
     for (let x = 0; x < baseW; x++) {
       const worldX = def.worldMinX + (x / (baseW - 1)) * worldW;
       const px = worldX / 10; // same as CaveWall: normX = x / 10
@@ -235,7 +235,7 @@ function buildStoneTextures(def: PanelDef) {
       //    worldY = 26-y/2048*52 → y/2048 = (26-worldY)/52
       const worldX = def.worldMinX + (x / finalW) * worldW;
       const worldY = def.worldMinY + (y / finalH) * worldH;
-      const staining = perlin(((worldX + 10) / 20) * 3.5, ((26 - worldY) / 52) * 3.5);
+      const staining = perlin(((worldX + 10) / 20) * 3.5, ((32.5 - worldY) / 65) * 3.5);
       r += staining*14; g += staining*8; b += staining*3;
       const sandSpeckle = (fastRandom()-0.5)*6.0;
       r += sandSpeckle; g += sandSpeckle; b += sandSpeckle;
@@ -301,7 +301,7 @@ function StonePanel({ def }: { def: PanelDef }) {
       const worldX = def.position[0] + lx;
       const worldY = def.position[1] + ly;
       const px = worldX / 10;  // same mapping as CaveWall
-      const py = worldY / 26;
+      const py = worldY / 32.5;
       const geo = getGeology(px, py);
       pos.setZ(i, (geo.totalHeight - 0.5) * 0.7);
     }
