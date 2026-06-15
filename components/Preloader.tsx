@@ -68,9 +68,8 @@ export default function Preloader({ isLoading }: PreloaderProps) {
 
   return (
     <div
-      className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black select-none transition-opacity duration-[1200ms] cubic-bezier-transition ${
-        exitFade ? "opacity-0 pointer-events-none" : "opacity-100"
-      }`}
+      className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black select-none transition-opacity duration-[1200ms] cubic-bezier-transition ${exitFade ? "opacity-0 pointer-events-none" : "opacity-100"
+        }`}
     >
       {/* === EMBER CORE (vertically centered) === */}
       <div className="relative flex items-center justify-center" style={{ marginTop: "-60px" }}>
@@ -116,12 +115,12 @@ export default function Preloader({ isLoading }: PreloaderProps) {
         {/* Floating ember particles */}
         {phase >= 1 && [
           { x: "-18px", y: "-85px", size: "3px", delay: "0.3s", dur: "2.8s" },
-          { x: "22px",  y: "-110px", size: "2px", delay: "0.8s", dur: "3.2s" },
-          { x: "-8px",  y: "-140px", size: "2.5px", delay: "0.5s", dur: "3.8s" },
-          { x: "35px",  y: "-90px",  size: "2px", delay: "1.1s", dur: "2.5s" },
+          { x: "22px", y: "-110px", size: "2px", delay: "0.8s", dur: "3.2s" },
+          { x: "-8px", y: "-140px", size: "2.5px", delay: "0.5s", dur: "3.8s" },
+          { x: "35px", y: "-90px", size: "2px", delay: "1.1s", dur: "2.5s" },
           { x: "-30px", y: "-120px", size: "2px", delay: "0.9s", dur: "3.5s" },
-          { x: "10px",  y: "-160px", size: "1.5px", delay: "1.4s", dur: "4.0s" },
-          { x: "-42px", y: "-95px",  size: "2px", delay: "1.8s", dur: "2.9s" },
+          { x: "10px", y: "-160px", size: "1.5px", delay: "1.4s", dur: "4.0s" },
+          { x: "-42px", y: "-95px", size: "2px", delay: "1.8s", dur: "2.9s" },
         ].map((p, i) => (
           <div
             key={i}
@@ -164,9 +163,8 @@ export default function Preloader({ isLoading }: PreloaderProps) {
 
       {/* === TEXT + INSTRUCTIONS BLOCK (below ember, always in flow) === */}
       <div
-        className={`flex flex-col items-center select-none pointer-events-none ${
-          fadingOut ? "animate-text-fade-out" : ""
-        }`}
+        className={`flex flex-col items-center select-none pointer-events-none ${fadingOut ? "animate-text-fade-out" : ""
+          }`}
         style={{ marginTop: "48px" }}
       >
         {/* Intro text */}
