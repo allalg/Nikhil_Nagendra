@@ -22,12 +22,12 @@ interface LinkDef {
 const CONTACT_LINKS: LinkDef[] = [
   {
     label: "LinkedIn",
-    canvasX: 700, canvasY: 2440, canvasW: 160, canvasH: 30,
+    canvasX: 700, canvasY: 2435, canvasW: 160, canvasH: 40,
     href: "https://www.linkedin.com/in/nikhil-nagendra-a89828160/",
   },
   {
     label: "GitHub — allalg",
-    canvasX: 700, canvasY: 2472, canvasW: 220, canvasH: 30,
+    canvasX: 700, canvasY: 2467, canvasW: 220, canvasH: 40,
     href: "https://github.com/allalg",
   },
 ];
