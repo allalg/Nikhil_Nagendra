@@ -83,9 +83,9 @@ export default function CursorTorch({ visibleAfterLoading }: CursorTorchProps) {
       const targetX = mouseRef.current.x;
       const targetY = mouseRef.current.y;
 
-      // Snappy but smooth lerp (syncs with 3D Torch light)
-      currentRef.current.x += (targetX - currentRef.current.x) * 0.25;
-      currentRef.current.y += (targetY - currentRef.current.y) * 0.25;
+      // Smooth lerp (same 0.042 factor as 3D Torch light)
+      currentRef.current.x += (targetX - currentRef.current.x) * 0.042;
+      currentRef.current.y += (targetY - currentRef.current.y) * 0.042;
 
       // Velocity for 3D tilt
       const vx = currentRef.current.x - prevRef.current.x;
@@ -196,11 +196,11 @@ export default function CursorTorch({ visibleAfterLoading }: CursorTorchProps) {
           {/* Flame Corona Glow (GPU Optimized: radial-gradient instead of heavy CSS blur) */}
           <div
             className="absolute w-56 h-56 rounded-full pointer-events-none animate-pulse-glow"
-            style={{ 
-              left: "-1rem", 
+            style={{
+              left: "-1rem",
               top: "-2rem",
               background: "radial-gradient(circle, rgba(234,88,12,0.2) 0%, rgba(234,88,12,0.05) 40%, rgba(234,88,12,0) 70%)",
-              transform: "translateZ(-8px)" 
+              transform: "translateZ(-8px)"
             }}
           />
 
@@ -261,7 +261,7 @@ export default function CursorTorch({ visibleAfterLoading }: CursorTorchProps) {
                 <stop offset="70%" stopColor="#ff5722" stopOpacity="0.75" />
                 <stop offset="100%" stopColor="#b71c1c" stopOpacity="0.4" />
               </linearGradient>
-              
+
               {/* Driftwood Vertical Shading */}
               <linearGradient id="woodShadow" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#ff9a3c" />
@@ -297,7 +297,7 @@ export default function CursorTorch({ visibleAfterLoading }: CursorTorchProps) {
 
             {/* SCONCE HEAD: Wrought-Iron Cage */}
             <path d="M30 66 L66 66 L58 86 L38 86 Z" fill="url(#emberGlow)" />
-            
+
             {/* Hot Glowing Charcoal chunks */}
             <circle cx="42" cy="77" r="4.5" fill="#ff7043" opacity="0.9" />
             <circle cx="54" cy="79" r="3.5" fill="#ffa726" opacity="0.95" />
@@ -365,7 +365,7 @@ export default function CursorTorch({ visibleAfterLoading }: CursorTorchProps) {
             <path d="M 41 90 C 45 92, 51 92, 55 90" stroke="#7a5230" strokeWidth="3" strokeLinecap="round" />
             <path d="M 40.5 95 L 54.5 100" stroke="#5d3c22" strokeWidth="3.2" strokeLinecap="round" />
             <path d="M 54.5 95 L 40.5 100" stroke="#7a5230" strokeWidth="2.8" strokeLinecap="round" />
-            
+
             {/* Bronze Ring 1 */}
             <path d="M 38.5 105 C 42 107, 52 107, 55.5 105" stroke="url(#bronzeShade)" strokeWidth="4" strokeLinecap="round" />
             <path d="M 39 105 C 42 106.5, 52 106.5, 55 105" stroke="#ffffff" strokeOpacity="0.4" strokeWidth="1.0" strokeLinecap="round" />
