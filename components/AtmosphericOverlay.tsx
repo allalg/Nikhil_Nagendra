@@ -49,85 +49,37 @@ export default function AtmosphericOverlay({ visibleAfterLoading }: AtmosphericO
     };
   }, [isVisible]);
 
-  // ── Procedural Audio Synthesizer ──────────────────────────────────────────
+  // ── Background MP3 Audio Player ──────────────────────────────────────────
   useEffect(() => {
-    class ProceduralAmbientSynth {
-      private ctx: AudioContext | null = null;
-      private gainNode: GainNode | null = null;
+    class BackgroundAudioPlayer {
+      private audio: HTMLAudioElement | null = null;
       private isPlaying = false;
-      private crackleInterval: any = null;
 
       start() {
         if (this.isPlaying) return;
         try {
-          const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
-          this.ctx = new AudioContextClass();
-          this.gainNode = this.ctx.createGain();
-          this.gainNode.gain.setValueAtTime(0.4, this.ctx.currentTime); // Master volume up
-          this.gainNode.connect(this.ctx.destination);
-
-          const sampleRate = this.ctx.sampleRate;
-          const bufferSize = 2 * sampleRate;
-          const noiseBuffer = this.ctx.createBuffer(1, bufferSize, sampleRate);
-          const output = noiseBuffer.getChannelData(0);
-          let lastOut = 0.0;
-          for (let i = 0; i < bufferSize; i++) {
-            const white = Math.random() * 2 - 1;
-            output[i] = (lastOut + 0.05 * white) / 1.05; // Slightly brighter noise
-            lastOut = output[i];
-            output[i] *= 4.0;
+          if (!this.audio) {
+            // Using the exact file path uploaded by the user in the public folder
+            this.audio = new Audio("/background_music/- Dark Tomb -  Cave Sounds  5 Minutes.mp3");
+            this.audio.loop = true;
+            this.audio.volume = 0.6; // Adjust master volume as needed
           }
-
-          const rumbleSource = this.ctx.createBufferSource();
-          rumbleSource.buffer = noiseBuffer;
-          rumbleSource.loop = true;
-          const rumbleFilter = this.ctx.createBiquadFilter();
-          rumbleFilter.type = "lowpass";
-          rumbleFilter.frequency.setValueAtTime(150, this.ctx.currentTime); // Raised from 55Hz to 150Hz for laptop speakers
-          rumbleSource.connect(rumbleFilter);
-          rumbleFilter.connect(this.gainNode);
-          rumbleSource.start(0);
-
-          this.crackleInterval = setInterval(() => {
-            if (!this.ctx || this.ctx.state === "suspended") return;
-            if (Math.random() > 0.4) this.playSparkCrackle();
-          }, 150);
-
+          this.audio.play().catch((err) => console.error("Audio playback failed (browser might be blocking autoplay until interaction):", err));
           this.isPlaying = true;
         } catch (err) {
-          console.error("Web Audio Synthesizer failed:", err);
+          console.error("Audio player failed:", err);
         }
       }
 
-      private playSparkCrackle() {
-        if (!this.ctx || !this.gainNode) return;
-        const duration = 0.01 + Math.random() * 0.02; // Slightly longer crackle
-        const sparkBuffer = this.ctx.createBuffer(1, this.ctx.sampleRate * duration, this.ctx.sampleRate);
-        const data = sparkBuffer.getChannelData(0);
-        for (let i = 0; i < sparkBuffer.length; i++) data[i] = Math.random() * 2 - 1;
-        const source = this.ctx.createBufferSource();
-        source.buffer = sparkBuffer;
-        const filter = this.ctx.createBiquadFilter();
-        filter.type = "bandpass";
-        filter.frequency.value = 1200 + Math.random() * 1500;
-        filter.Q.value = 3.0; // Less resonant for a thicker snap
-        const sparkGain = this.ctx.createGain();
-        sparkGain.gain.setValueAtTime(0.8 + Math.random() * 0.5, this.ctx.currentTime); // Much louder crackle
-        sparkGain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + duration);
-        source.connect(filter);
-        filter.connect(sparkGain);
-        sparkGain.connect(this.gainNode);
-        source.start(0);
-      }
-
       stop() {
-        if (this.crackleInterval) { clearInterval(this.crackleInterval); this.crackleInterval = null; }
-        if (this.ctx) { this.ctx.close(); this.ctx = null; }
+        if (this.audio) {
+          this.audio.pause();
+        }
         this.isPlaying = false;
       }
     }
 
-    audioSynthRef.current = new ProceduralAmbientSynth();
+    audioSynthRef.current = new BackgroundAudioPlayer();
     return () => { if (audioSynthRef.current) audioSynthRef.current.stop(); };
   }, []);
 
