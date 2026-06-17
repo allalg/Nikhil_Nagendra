@@ -20,29 +20,30 @@ export default function DecodeHandwriting() {
       {/* Toggle button — top-right, styled as a cave-themed icon */}
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed z-50 pointer-events-auto cursor-pointer"
+        className="fixed z-50 pointer-events-auto cursor-pointer flex items-center justify-center gap-2 group"
         style={{
-          top: "1.5%",
+          top: "calc(1.5% + 1cm)", // Moved 1cm below original position
           right: "1.5%",
-          padding: "8px 16px",
-          background: "rgba(20, 14, 8, 0.7)",
-          border: "1px solid rgba(180, 130, 60, 0.25)",
-          borderRadius: "6px",
-          backdropFilter: "blur(6px)",
+          padding: "12px 20px", // Larger hit area for accessibility
+          background: "rgba(30, 20, 10, 0.85)", // Darker, less transparent background for higher contrast
+          border: "1px solid rgba(220, 160, 80, 0.4)", // Brighter border
+          borderRadius: "8px",
+          backdropFilter: "blur(8px)",
           transition: "all 0.3s ease",
+          boxShadow: "0 4px 15px rgba(0,0,0,0.5)",
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.background = "rgba(40, 28, 12, 0.9)";
-          e.currentTarget.style.borderColor = "rgba(217, 168, 80, 0.6)";
+          e.currentTarget.style.background = "rgba(50, 35, 15, 0.95)";
+          e.currentTarget.style.borderColor = "rgba(251, 191, 36, 0.8)"; // amber-400
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.background = "rgba(20, 14, 8, 0.7)";
-          e.currentTarget.style.borderColor = "rgba(180, 130, 60, 0.25)";
+          e.currentTarget.style.background = "rgba(30, 20, 10, 0.85)";
+          e.currentTarget.style.borderColor = "rgba(220, 160, 80, 0.4)";
         }}
         aria-label="Decode my handwriting"
       >
         <span
-          className="text-amber-200/70 text-[10px] tracking-widest uppercase"
+          className="text-amber-50 text-[13px] font-bold tracking-wider uppercase group-hover:text-white transition-colors duration-300 drop-shadow-md"
           style={{ fontFamily: "Inter, system-ui, sans-serif" }}
         >
           📜 Decode my handwriting
