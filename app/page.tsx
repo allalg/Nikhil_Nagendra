@@ -46,21 +46,6 @@ export default function Home() {
   return (
     <main className="relative w-screen h-[100dvh] overflow-hidden bg-black select-none custom-cursor-active">
       
-      {/* 
-        Native Mobile Scroll Container 
-        Appears only after entering the cave.
-        Allows native browser vertical scrolling which we sync to the 3D camera.
-      */}
-      {isMobile && entered && (
-        <div 
-          id="mobile-scroll-container"
-          className="absolute inset-0 z-40 overflow-y-auto"
-          style={{ WebkitOverflowScrolling: 'touch' }}
-        >
-          <div className="w-full h-[700vh]" />
-        </div>
-      )}
-
       <Preloader isLoading={!canvasReady} onEnter={handleEnter} />
 
       {/* Full-screen 3D cave */}

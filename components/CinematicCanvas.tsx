@@ -94,29 +94,17 @@ function FreeLookController() {
     
     let targetY = pointer.y * 32 - 3;
     let tx = 0;
-    let targetZ = 4.5;
+    let targetZ = isMobile ? 10.0 : 4.5; // Push back on mobile to fit horizontally
 
-    if (isMobile) {
-      targetZ = 12.0; // Pull camera far back to fit 10-unit wide wall on narrow screen
-      // Read Y position from native scroll container
-      const container = document.getElementById("mobile-scroll-container");
-      if (container) {
-        const maxScroll = container.scrollHeight - container.clientHeight;
-        if (maxScroll > 0) {
-          const scrollProgress = container.scrollTop / maxScroll;
-          targetY = 29 - scrollProgress * 64; // +29 down to -35
-        }
-      }
+    if (!hasMoved.current) {
+      // Automatic pan to the name and wait
+      targetY = NAME_Y;
+      tx = NAME_X;
     } else {
-      // Horizontal pan logic for desktop only
-      if (!hasMoved.current) {
-        targetY = NAME_Y;
-        tx = NAME_X;
-      } else {
-        if (Math.abs(pointer.x) > dead) {
-          const t = (Math.abs(pointer.x) - dead) / (1 - dead);
-          tx = Math.sign(pointer.x) * t * maxX;
-        }
+      // Horizontal: dead-zone ramp
+      if (Math.abs(pointer.x) > dead) {
+        const t = (Math.abs(pointer.x) - dead) / (1 - dead);
+        tx = Math.sign(pointer.x) * t * maxX;
       }
     }
 
