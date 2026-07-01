@@ -20,11 +20,10 @@ export default function DecodeHandwriting() {
       {/* Toggle button — top-right, styled as a cave-themed icon */}
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed z-50 pointer-events-auto cursor-pointer flex items-center justify-center gap-2 group animate-decode-pulse"
+        className="fixed z-50 pointer-events-auto cursor-pointer flex items-center justify-center gap-2 group animate-decode-pulse max-md:p-[8px_12px] p-[12px_20px]"
         style={{
           top: "calc(1.5% + 1cm)", // Moved 1cm below original position
           right: "1.5%",
-          padding: "12px 20px", // Larger hit area for accessibility
           background: "rgba(30, 20, 10, 0.85)", // Darker, less transparent background for higher contrast
           border: "1px solid rgba(220, 160, 80, 0.4)", // Brighter border
           borderRadius: "8px",
@@ -35,7 +34,7 @@ export default function DecodeHandwriting() {
         aria-label="Decode my handwriting"
       >
         <span
-          className="text-amber-50 text-[13px] font-bold tracking-wider uppercase group-hover:text-white transition-colors duration-300 drop-shadow-md animate-decode-text-pulse"
+          className="text-amber-50 font-bold tracking-wider uppercase group-hover:text-white transition-colors duration-300 drop-shadow-md animate-decode-text-pulse max-md:text-[10px] text-[13px]"
           style={{ fontFamily: "Inter, system-ui, sans-serif" }}
         >
           📜 Decode my handwriting

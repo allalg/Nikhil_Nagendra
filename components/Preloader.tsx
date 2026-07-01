@@ -12,26 +12,35 @@ const INTRO_TEXT = "some caves hold stories.";
 
 export default function Preloader({ isLoading, onEnter }: PreloaderProps) {
   const [mounted, setMounted] = useState(true);
+  const [isReady, setIsReady] = useState(false);
   const [textVisible, setTextVisible] = useState(false);
   const [promptVisible, setPromptVisible] = useState(false);
   const [ignited, setIgnited] = useState(false);
   const [exitFade, setExitFade] = useState(false);
   const canvasReadyRef = useRef(false);
 
-  // Phase-in sequence (text → prompt)
-  useEffect(() => {
-    const t1 = setTimeout(() => setTextVisible(true), 600);
-    const t2 = setTimeout(() => setPromptVisible(true), 2800);
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-    };
-  }, []);
-
   // Track when canvas/WebGL is ready
   useEffect(() => {
-    if (!isLoading) canvasReadyRef.current = true;
+    if (!isLoading) {
+      canvasReadyRef.current = true;
+      // Small delay to ensure the browser has painted the first frame of WebGL
+      // before we start triggering CSS transitions and animations
+      const t0 = setTimeout(() => setIsReady(true), 150);
+      return () => clearTimeout(t0);
+    }
   }, [isLoading]);
+
+  // Phase-in sequence (text → prompt) triggers ONLY after WebGL is ready
+  useEffect(() => {
+    if (isReady) {
+      const t1 = setTimeout(() => setTextVisible(true), 800);
+      const t2 = setTimeout(() => setPromptVisible(true), 3200);
+      return () => {
+        clearTimeout(t1);
+        clearTimeout(t2);
+      };
+    }
+  }, [isReady]);
 
   // Listen for sconce gate opening (user lit a real 3D sconce)
   useEffect(() => {
@@ -89,6 +98,15 @@ export default function Preloader({ isLoading, onEnter }: PreloaderProps) {
             ? "transparent"
             : "radial-gradient(ellipse at center, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.88) 60%, rgba(0,0,0,0.95) 100%)",
           opacity: exitFade ? 0 : 1,
+        }}
+      />
+      
+      {/* Solid Black mask that hides WebGL load stutter, fades out after loading */}
+      <div 
+        className="absolute inset-0 bg-black pointer-events-none"
+        style={{
+          transition: "opacity 1.5s ease-in-out",
+          opacity: isReady ? 0 : 1,
         }}
       />
 
