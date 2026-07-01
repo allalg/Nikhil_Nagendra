@@ -14,6 +14,7 @@ import { sconceGateState } from "./sconceGateState";
 
 interface CinematicCanvasProps {
   onLoaded: () => void;
+  isMobile: boolean;
 }
 
 // ── MOUSE-DRIVEN FREE-LOOK CAMERA ─────────────────────────────────────────────
@@ -144,10 +145,7 @@ function FreeLookController() {
   return null;
 }
 
-export default function CinematicCanvas({ onLoaded }: CinematicCanvasProps) {
-  const { size } = useThree();
-  const isMobile = size.width < 768 || size.height > size.width;
-
+export default function CinematicCanvas({ onLoaded, isMobile }: CinematicCanvasProps) {
   return (
     <div className="fixed inset-0 w-full h-full bg-black select-none overflow-hidden">
       <Canvas

@@ -66,6 +66,7 @@ export default function Home() {
       {/* Full-screen 3D cave */}
       <CinematicCanvas
         onLoaded={() => setCanvasReady(true)}
+        isMobile={isMobile ?? false}
       />
 
       {/* Contact links overlay */}
