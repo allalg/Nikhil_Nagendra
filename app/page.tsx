@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import dynamic from "next/dynamic";
 import Preloader from "@/components/Preloader";
 import CursorTorch from "@/components/CursorTorch";
@@ -8,6 +8,7 @@ import AtmosphericOverlay from "@/components/AtmosphericOverlay";
 import CaveNav from "@/components/CaveNav";
 import ProjectPreview from "@/components/ProjectPreview";
 import DecodeHandwriting from "@/components/DecodeHandwriting";
+import MobileView from "@/components/MobileView";
 
 const CinematicCanvas = dynamic(() => import("@/components/CinematicCanvas"), {
   ssr: false,
@@ -25,46 +26,76 @@ const NAV_SECTIONS = [
 ];
 
 export default function Home() {
-  const [isLoading, setIsLoading] = useState(true);
+  // canvasReady: WebGL/3D scene is loaded and rendering
+  // entered: user has lit a sconce and the preloader has exited
+  const [canvasReady, setCanvasReady] = useState(false);
+  const [entered, setEntered] = useState(false);
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
 
-  // scrollProgress is now in scrollState.ts (shared ref) —
-  // no React state needed, no per-frame re-renders.
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  useEffect(() => {
+    // Mobile doesn't need to wait for a 3D canvas to load
+    if (isMobile) {
+      setCanvasReady(true);
+    }
+  }, [isMobile]);
+
+  const handleEnter = useCallback(() => {
+    setEntered(true);
+  }, []);
+
+  // Prevent hydration mismatch by rendering a simple black screen until we know the device type
+  if (isMobile === null) {
+    return <main className="w-screen h-screen bg-black" />;
+  }
+
+  if (isMobile) {
+    return (
+      <main className="relative w-screen h-screen overflow-hidden bg-black select-none">
+        <MobileView entered={entered} onEnter={handleEnter} />
+        {/* Decode handwriting popup still accessible on mobile */}
+        <DecodeHandwriting />
+      </main>
+    );
+  }
 
   return (
     <main className="relative w-screen h-screen overflow-hidden bg-black select-none custom-cursor-active">
-      <Preloader isLoading={isLoading} />
+      <Preloader isLoading={!canvasReady} onEnter={handleEnter} />
 
-      {/*
-        Full-screen 3D cave — mouse drives camera in ALL directions.
-        Moving torch down → camera pans to Contact section.
-        Moving torch up   → camera pans to Hero section.
-        Moving torch left/right → reveals cave wall sides.
-        No scrolling needed.
-      */}
+      {/* Full-screen 3D cave */}
       <CinematicCanvas
-        onLoaded={() => setIsLoading(false)}
+        onLoaded={() => setCanvasReady(true)}
       />
 
       {/* Contact links overlay */}
       <AtmosphericOverlay
-        visibleAfterLoading={!isLoading}
+        visibleAfterLoading={entered}
       />
 
       {/* Project preview popups on hover */}
-      <ProjectPreview visible={!isLoading} />
+      <ProjectPreview visible={entered} />
 
       {/* Cave nav dots — display only, shows current section */}
       <CaveNav
         sections={NAV_SECTIONS}
         onNavigate={() => {}}
-        visible={!isLoading}
+        visible={entered}
       />
 
       {/* Decode handwriting popup */}
       <DecodeHandwriting />
 
       {/* Custom wooden torch cursor */}
-      <CursorTorch visibleAfterLoading={!isLoading} />
+      <CursorTorch visibleAfterLoading={true} />
     </main>
   );
 }

@@ -1,186 +1,115 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
+import { sconceGateState } from "./sconceGateState";
 
 interface PreloaderProps {
   isLoading: boolean;
+  onEnter: () => void;
 }
 
 const INTRO_TEXT = "some caves hold stories.";
 
-const INSTRUCTIONS = [
-  { icon: "🔦", text: "Move your mouse to explore with the torch" },
-  { icon: "🔥", text: "Click near wall sconces to ignite them" },
-  { icon: "⬆⬇", text: "Move torch up / down to navigate sections" },
-  { icon: "📜", text: "Hover over projects for a quick preview" },
-];
-
-export default function Preloader({ isLoading }: PreloaderProps) {
+export default function Preloader({ isLoading, onEnter }: PreloaderProps) {
   const [mounted, setMounted] = useState(true);
-  const [phase, setPhase] = useState(0);
-  // phase 0: pure dark with tiny ember dot
-  // phase 1: ember glow expands + floating particles
-  // phase 2: intro text + instructions appear together
-  // phase 3: everything fades out
-  // phase 4: ready to exit
-
   const [textVisible, setTextVisible] = useState(false);
-  const [showInstructions, setShowInstructions] = useState(false);
-  const [fadingOut, setFadingOut] = useState(false);
+  const [promptVisible, setPromptVisible] = useState(false);
+  const [ignited, setIgnited] = useState(false);
   const [exitFade, setExitFade] = useState(false);
-  const [minTimeReached, setMinTimeReached] = useState(false);
-  const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const canvasReadyRef = useRef(false);
 
-  const clearTimers = () => timersRef.current.forEach(clearTimeout);
-
+  // Phase-in sequence (text → prompt)
   useEffect(() => {
-    const t1 = setTimeout(() => setPhase(1), 500);           // Ember glow
-    const t2 = setTimeout(() => {                              // Intro text
-      setPhase(2);
-      setTextVisible(true);
-    }, 1400);
-    const t3 = setTimeout(() => setShowInstructions(true), 2400);  // Instructions (staggered)
-    const t4 = setTimeout(() => {                              // Fade everything out
-      setFadingOut(true);
-      setPhase(3);
-    }, 7500);
-    const t5 = setTimeout(() => setPhase(4), 8800);           // Ready to exit
-
-    // Minimum 5 seconds
-    const tMin = setTimeout(() => setMinTimeReached(true), 5000);
-
-    timersRef.current = [t1, t2, t3, t4, t5, tMin];
-    return clearTimers;
+    const t1 = setTimeout(() => setTextVisible(true), 600);
+    const t2 = setTimeout(() => setPromptVisible(true), 2800);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
   }, []);
 
-  // Exit when: phase ready AND WebGL loaded AND min time passed
+  // Track when canvas/WebGL is ready
   useEffect(() => {
-    if (phase >= 4 && !isLoading && minTimeReached) {
-      const t = setTimeout(() => {
-        setExitFade(true);
-        setTimeout(() => setMounted(false), 1400);
-      }, 300);
-      timersRef.current.push(t);
-    }
-  }, [phase, isLoading, minTimeReached]);
+    if (!isLoading) canvasReadyRef.current = true;
+  }, [isLoading]);
+
+  // Listen for sconce gate opening (user lit a real 3D sconce)
+  useEffect(() => {
+    const unsub = sconceGateState.onOpen(() => {
+      if (ignited) return;
+      setIgnited(true);
+
+      // Wait for ignition to feel dramatic, then exit
+      const exitDelay = setTimeout(() => {
+        // If canvas is ready, fade out immediately. Otherwise poll briefly.
+        const doExit = () => {
+          setExitFade(true);
+          setTimeout(() => {
+            setMounted(false);
+            onEnter();
+          }, 1200);
+        };
+
+        if (canvasReadyRef.current) {
+          doExit();
+        } else {
+          const poll = setInterval(() => {
+            if (canvasReadyRef.current) {
+              clearInterval(poll);
+              doExit();
+            }
+          }, 100);
+          // Safety: force exit after 3s even if canvas never signals ready
+          setTimeout(() => {
+            clearInterval(poll);
+            doExit();
+          }, 3000);
+        }
+      }, 1000);
+
+      return () => clearTimeout(exitDelay);
+    });
+
+    return unsub;
+  }, [ignited, onEnter]);
 
   if (!mounted) return null;
 
   return (
     <div
-      className={`fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black select-none transition-opacity duration-[1200ms] cubic-bezier-transition ${exitFade ? "opacity-0 pointer-events-none" : "opacity-100"
+      className={`fixed inset-0 z-[60] flex flex-col items-center select-none pointer-events-none transition-opacity duration-[1200ms] cubic-bezier-transition ${exitFade ? "opacity-0" : "opacity-100"
         }`}
     >
-      {/* === EMBER CORE (vertically centered) === */}
-      <div className="relative flex items-center justify-center" style={{ marginTop: "-60px" }}>
-
-        {/* Outer volumetric halo */}
-        {phase >= 1 && (
-          <div
-            className="absolute rounded-full animate-glow-expand pointer-events-none"
-            style={{
-              width: "340px",
-              height: "340px",
-              background: "radial-gradient(circle, rgba(251,146,60,0.14) 0%, rgba(180,83,9,0.07) 45%, transparent 75%)",
-            }}
-          />
-        )}
-
-        {/* Mid glow ring */}
-        {phase >= 1 && (
-          <div
-            className="absolute rounded-full animate-glow-expand pointer-events-none"
-            style={{
-              width: "120px",
-              height: "120px",
-              background: "radial-gradient(circle, rgba(251,146,60,0.3) 0%, rgba(180,83,9,0.12) 55%, transparent 80%)",
-              animationDelay: "0.15s",
-            }}
-          />
-        )}
-
-        {/* Inner warm glow */}
-        {phase >= 1 && (
-          <div
-            className="absolute rounded-full animate-glow-expand pointer-events-none"
-            style={{
-              width: "48px",
-              height: "48px",
-              background: "radial-gradient(circle, rgba(255,200,100,0.6) 0%, rgba(251,146,60,0.25) 60%, transparent 100%)",
-              animationDelay: "0.05s",
-            }}
-          />
-        )}
-
-        {/* Floating ember particles */}
-        {phase >= 1 && [
-          { x: "-18px", y: "-85px", size: "3px", delay: "0.3s", dur: "2.8s" },
-          { x: "22px", y: "-110px", size: "2px", delay: "0.8s", dur: "3.2s" },
-          { x: "-8px", y: "-140px", size: "2.5px", delay: "0.5s", dur: "3.8s" },
-          { x: "35px", y: "-90px", size: "2px", delay: "1.1s", dur: "2.5s" },
-          { x: "-30px", y: "-120px", size: "2px", delay: "0.9s", dur: "3.5s" },
-          { x: "10px", y: "-160px", size: "1.5px", delay: "1.4s", dur: "4.0s" },
-          { x: "-42px", y: "-95px", size: "2px", delay: "1.8s", dur: "2.9s" },
-        ].map((p, i) => (
-          <div
-            key={i}
-            className="absolute rounded-full animate-ember-float pointer-events-none"
-            style={{
-              width: p.size,
-              height: p.size,
-              background: "rgba(251,191,36,0.9)",
-              boxShadow: `0 0 4px 2px rgba(251,146,60,0.5)`,
-              left: "50%",
-              top: "50%",
-              marginLeft: `calc(${p.size} / -2)`,
-              marginTop: `calc(${p.size} / -2)`,
-              "--float-x": p.x,
-              "--float-y": p.y,
-              "--float-dur": p.dur,
-              opacity: 0,
-              animationDelay: p.delay,
-              animationFillMode: "both",
-            } as React.CSSProperties}
-          />
-        ))}
-
-        {/* Ember dot core */}
-        <div
-          className="relative z-10 rounded-full animate-pulse-glow"
-          style={{
-            width: phase >= 1 ? "6px" : "3px",
-            height: phase >= 1 ? "6px" : "3px",
-            background: phase >= 1
-              ? "radial-gradient(circle, #fff8e1, #fbbf24)"
-              : "rgba(251,191,36,0.7)",
-            boxShadow: phase >= 1
-              ? "0 0 12px 5px rgba(251,146,60,0.8), 0 0 30px 10px rgba(180,83,9,0.4)"
-              : "0 0 4px 2px rgba(251,146,60,0.3)",
-            transition: "all 0.8s ease-out",
-          }}
-        />
-      </div>
-
-      {/* === TEXT + INSTRUCTIONS BLOCK (below ember, always in flow) === */}
+      {/* Dark overlay that lets the 3D scene bleed through subtly.
+          Semi-transparent so the sconce ember glow is visible underneath. */}
       <div
-        className={`flex flex-col items-center select-none pointer-events-none ${fadingOut ? "animate-text-fade-out" : ""
-          }`}
-        style={{ marginTop: "48px" }}
-      >
-        {/* Intro text */}
-        {textVisible && (
-          <div
-            className="font-myfont text-amber-200/90"
-            style={{
-              fontSize: "clamp(18px, 2.2vw, 28px)",
-              letterSpacing: "0.04em",
-              whiteSpace: "nowrap",
-              textShadow: "0 0 20px rgba(251,146,60,0.4)",
-              marginBottom: "40px",
-            }}
-            aria-label={INTRO_TEXT}
-          >
-            {INTRO_TEXT.split("").map((char, i) => (
+        className="absolute inset-0 transition-opacity duration-[1200ms] pointer-events-none"
+        style={{
+          background: ignited
+            ? "transparent"
+            : "radial-gradient(ellipse at center, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.88) 60%, rgba(0,0,0,0.95) 100%)",
+          opacity: exitFade ? 0 : 1,
+        }}
+      />
+
+      {/* === CONTENT LAYER (above dark overlay) === */}
+      <div className="relative z-10 flex flex-col items-center justify-center h-full pointer-events-none">
+        {/* === INTRO TEXT === */}
+        <div
+          className="font-myfont text-amber-200/90 pointer-events-none"
+          style={{
+            fontSize: "clamp(18px, 2.2vw, 28px)",
+            letterSpacing: "0.04em",
+            whiteSpace: "nowrap",
+            textShadow: "0 0 20px rgba(251,146,60,0.4)",
+            marginBottom: "80px",
+            opacity: textVisible && !ignited ? 1 : 0,
+            transition: "opacity 0.8s ease-out",
+          }}
+          aria-label={INTRO_TEXT}
+        >
+          {textVisible &&
+            INTRO_TEXT.split("").map((char, i) => (
               <span
                 key={i}
                 className="animate-char-reveal inline-block"
@@ -193,96 +122,113 @@ export default function Preloader({ isLoading }: PreloaderProps) {
                 {char}
               </span>
             ))}
+        </div>
+
+        {/* === SCONCE AREA INDICATOR ===
+            A subtle glowing ring that draws the eye toward the real 3D sconce
+            visible through the semi-transparent overlay. The actual sconce is
+            rendered by WallSconces.tsx in the 3D canvas behind this overlay. */}
+        {!ignited && promptVisible && (
+          <div
+            className="relative flex flex-col items-center"
+            style={{ marginBottom: "40px" }}
+          >
+            {/* Pulsing ring around the sconce area */}
+            <div
+              className="animate-ember-breathe rounded-full"
+              style={{
+                width: "100px",
+                height: "100px",
+                border: "1.5px solid rgba(251,146,60,0.25)",
+                boxShadow:
+                  "0 0 30px rgba(251,146,60,0.15), inset 0 0 20px rgba(251,146,60,0.08)",
+              }}
+            />
           </div>
         )}
 
-        {/* Interaction instructions — appear below intro text */}
-        {showInstructions && (
-          <div
+        {/* === PROMPT TEXT & INSTRUCTIONS === */}
+        <div
+          className={`pointer-events-none transition-all duration-700 flex flex-col items-center ${promptVisible && !ignited
+            ? "opacity-100 translate-y-0"
+            : "opacity-0 translate-y-4"
+            }`}
+        >
+          <span
+            className="font-myfont animate-prompt-pulse"
             style={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: "12px",
+              fontSize: "clamp(18px, 2.2vw, 28px)",
+              color: "rgba(255, 225, 160, 1)", // Brightened significantly
+              letterSpacing: "0.08em",
+              textShadow: "0 0 16px rgba(251,146,60,0.8), 0 0 30px rgba(251,146,60,0.4)", // Stronger glow
             }}
           >
-            {/* Thin divider */}
-            <div
-              className="instruction-reveal"
-              style={{
-                width: "50px",
-                height: "1px",
-                background: "rgba(180, 130, 60, 0.25)",
-                marginBottom: "6px",
-                animationDelay: "0ms",
-              }}
-            />
+            light a sconce to enter
+          </span>
+          <span
+            className="font-myfont mt-4"
+            style={{
+              fontSize: "clamp(18px, 2.2vw, 28px)",
+              color: "rgba(237, 173, 24, 0.96)",
+              letterSpacing: "0.06em",
+              textShadow: "0 0 16px rgba(251,146,60,0.8), 0 0 30px rgba(251,146,60,0.4)", // Stronger glow
+            }}
+          >
+            ➡️ move your mouse to guide the torch and click
+          </span>
+          <span
+            className="font-myfont mt-2"
+            style={{
+              fontSize: "clamp(20px, 2.2vw, 28px)",
+              color: "rgba(237, 173, 24, 0.96)",
+              letterSpacing: "0.06em",
+              textShadow: "0 0 16px rgba(251,146,60,0.8), 0 0 30px rgba(251,146,60,0.4)", // Stronger glow
+            }}
+          >
+            ➡️ The <b>"Decode My Handwriting"</b> button will help you read the cave walls<br /> if my handwriting gets a little too adventurous.<br /> I only wish the examiners had this feature while correcting my papers! 😂
+          </span>
+        </div>
 
-            {INSTRUCTIONS.map((item, i) => (
-              <div
-                key={i}
-                className="instruction-reveal"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "12px",
-                  animationDelay: `${(i + 1) * 300}ms`,
-                }}
-              >
-                <span
-                  style={{
-                    fontSize: "15px",
-                    width: "26px",
-                    textAlign: "center",
-                    flexShrink: 0,
-                  }}
-                >
-                  {item.icon}
-                </span>
-                <span
-                  style={{
-                    fontFamily: "Inter, system-ui, sans-serif",
-                    fontSize: "clamp(11px, 1.3vw, 14px)",
-                    color: "rgba(220, 185, 120, 0.65)",
-                    letterSpacing: "0.05em",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {item.text}
-                </span>
-              </div>
-            ))}
-
-            {/* "entering cave..." tagline */}
-            <div
-              className="instruction-reveal"
+        {/* === ENTERING CAVE TEXT (after ignition) === */}
+        {ignited && (
+          <div
+            className="mt-6 pointer-events-none"
+            style={{ animation: "charReveal 0.6s ease-out 0.3s both" }}
+          >
+            <span
+              className="font-myfont"
               style={{
-                marginTop: "12px",
-                animationDelay: `${(INSTRUCTIONS.length + 1) * 300 + 200}ms`,
+                fontSize: "clamp(18px, 2.5vw, 26px)",
+                color: "rgba(251, 191, 36, 0.9)",
+                letterSpacing: "0.08em",
+                textShadow: "0 0 16px rgba(251,146,60,0.5)",
               }}
             >
-              <span
-                className="font-myfont"
-                style={{
-                  fontSize: "clamp(18px, 2.5vw, 26px)",
-                  color: "rgba(251, 191, 36, 0.9)",
-                  letterSpacing: "0.08em",
-                  textShadow: "0 0 16px rgba(251,146,60,0.5)",
-                }}
-              >
-                entering cave...
-              </span>
-            </div>
+              entering cave...
+            </span>
           </div>
         )}
       </div>
 
-      {/* Subtle vignette overlay */}
+      {/* Warm screen wash on ignition */}
+      {ignited && (
+        <div
+          className="fixed inset-0 animate-warm-wash pointer-events-none z-20"
+          style={{
+            background:
+              "radial-gradient(ellipse at center, rgba(251,146,60,0.25) 0%, transparent 70%)",
+          }}
+        />
+      )}
+
+      {/* Subtle vignette (always) */}
       <div
         className="fixed inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.5) 75%, rgba(0,0,0,0.85) 100%)",
+            "radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.3) 75%, rgba(0,0,0,0.6) 100%)",
+          opacity: exitFade ? 0 : 1,
+          transition: "opacity 1.2s ease-out",
         }}
       />
     </div>

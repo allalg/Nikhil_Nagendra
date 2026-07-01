@@ -4,6 +4,7 @@ import { useRef, useState, useEffect, useMemo } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { torchPosRef } from "./torchState";
+import { sconceGateState } from "./sconceGateState";
 
 const SCONCES: { id: number; pos: [number, number, number] }[] = [
   { id: 0, pos: [-2.5, 28.5, 0.0] },
@@ -304,6 +305,7 @@ function SconceUnit({
 
 // ─────────────────────────────────────────────────────────────────────────────
 export default function WallSconces() {
+  // All sconces start UNLIT — user lights one on the loading screen to enter
   const [litSet, setLitSet] = useState<Set<number>>(new Set());
   const litSetRef = useRef<Set<number>>(new Set());
   litSetRef.current = litSet;
@@ -322,7 +324,15 @@ export default function WallSconces() {
         const proj = new THREE.Vector3(...s.pos).project(camera);
         if (proj.z > 1) return;
         const d = Math.sqrt((ndcX - proj.x) ** 2 + (ndcY - proj.y) ** 2);
-        if (d < 0.28) setLitSet((prev) => new Set([...prev, s.id]));
+        if (d < 0.28) {
+          // First sconce lit → open gate + light ALL sconces
+          if (litSetRef.current.size === 0) {
+            sconceGateState.open();
+            setLitSet(new Set(SCONCES.map((sc) => sc.id)));
+          } else {
+            setLitSet((prev) => new Set([...prev, s.id]));
+          }
+        }
       });
     };
     canvas.addEventListener("click", handleClick);

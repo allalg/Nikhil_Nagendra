@@ -10,6 +10,7 @@ import EmberParticles from "./EmberParticles";
 import DustMotes from "./DustMotes";
 import WallSconces from "./WallSconces";
 import { scrollProgressRef, cameraPosRef } from "./scrollState";
+import { sconceGateState } from "./sconceGateState";
 
 interface CinematicCanvasProps {
   onLoaded: () => void;
@@ -35,15 +36,54 @@ interface CinematicCanvasProps {
 //   Lerp speed: 0.035 — slow cinematic weighted lag, feels like floating
 //
 // Camera Y range: +29 (hero top) to -35 (contact bottom) = 64 world units total.
+// Sconce 0 position — camera locks here until gate opens
+const SCONCE_0_X = -2.5;
+const SCONCE_0_Y = 28.5;
+
 function FreeLookController() {
-  const camX     = useRef(-4.0); // Start at left
-  const camY     = useRef(28.5); // Start at top
+  const camX     = useRef(SCONCE_0_X);
+  const camY     = useRef(SCONCE_0_Y);
   const hasMoved = useRef(false);
+  const initialPointer = useRef<{x: number, y: number} | null>(null);
 
   useFrame(({ camera, pointer }) => {
-    // Detect first real mouse movement
-    if (!hasMoved.current && (pointer.x !== 0 || pointer.y !== 0)) {
-      hasMoved.current = true;
+    // ── GATE CHECK: lock camera on sconce 0 until user lights it ──────────
+    if (!sconceGateState.isOpen) {
+      // Camera stays fixed on sconce 0 — no mouse movement allowed
+      camX.current = THREE.MathUtils.lerp(camX.current, SCONCE_0_X, 0.05);
+      camY.current = THREE.MathUtils.lerp(camY.current, SCONCE_0_Y, 0.05);
+
+      camera.position.x = camX.current;
+      camera.position.y = camY.current;
+      camera.position.z = 4.5;
+      camera.lookAt(camera.position.x, camera.position.y, 0);
+
+      scrollProgressRef.current = 0;
+      cameraPosRef.current.x = camX.current;
+      cameraPosRef.current.y = camY.current;
+      return;
+    }
+
+    // Detect first real mouse movement after gate opens,
+    // BUT only allow it after the camera has finished its automatic pan to the name
+    const NAME_X = -4.0;
+    const NAME_Y = 28.5;
+    
+    // Check if we have reached the name position
+    const reachedName = Math.abs(camX.current - NAME_X) < 0.1 && Math.abs(camY.current - NAME_Y) < 0.1;
+
+    if (reachedName && !hasMoved.current) {
+      if (!initialPointer.current) {
+        // Record the mouse's resting position at the exact moment we reach the name
+        initialPointer.current = { x: pointer.x, y: pointer.y };
+      } else {
+        // Only unlock if the mouse actually moves away from its resting position
+        const dx = pointer.x - initialPointer.current.x;
+        const dy = pointer.y - initialPointer.current.y;
+        if (Math.abs(dx) > 0.03 || Math.abs(dy) > 0.03) {
+          hasMoved.current = true;
+        }
+      }
     }
 
     const dead = 0.08;
@@ -53,9 +93,9 @@ function FreeLookController() {
     let tx = 0;
 
     if (!hasMoved.current) {
-      // Default idle position: Top Left (focus on the name)
-      targetY = 28.5;
-      tx = -4.0;
+      // Automatic pan to the name and wait
+      targetY = NAME_Y;
+      tx = NAME_X;
     } else {
       // Horizontal: dead-zone ramp
       if (Math.abs(pointer.x) > dead) {

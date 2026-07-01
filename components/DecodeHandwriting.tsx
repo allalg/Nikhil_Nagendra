@@ -20,7 +20,7 @@ export default function DecodeHandwriting() {
       {/* Toggle button — top-right, styled as a cave-themed icon */}
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed z-50 pointer-events-auto cursor-pointer flex items-center justify-center gap-2 group"
+        className="fixed z-50 pointer-events-auto cursor-pointer flex items-center justify-center gap-2 group animate-decode-pulse"
         style={{
           top: "calc(1.5% + 1cm)", // Moved 1cm below original position
           right: "1.5%",
@@ -32,18 +32,10 @@ export default function DecodeHandwriting() {
           transition: "all 0.3s ease",
           boxShadow: "0 4px 15px rgba(0,0,0,0.5)",
         }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.background = "rgba(50, 35, 15, 0.95)";
-          e.currentTarget.style.borderColor = "rgba(251, 191, 36, 0.8)"; // amber-400
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.background = "rgba(30, 20, 10, 0.85)";
-          e.currentTarget.style.borderColor = "rgba(220, 160, 80, 0.4)";
-        }}
         aria-label="Decode my handwriting"
       >
         <span
-          className="text-amber-50 text-[13px] font-bold tracking-wider uppercase group-hover:text-white transition-colors duration-300 drop-shadow-md"
+          className="text-amber-50 text-[13px] font-bold tracking-wider uppercase group-hover:text-white transition-colors duration-300 drop-shadow-md animate-decode-text-pulse"
           style={{ fontFamily: "Inter, system-ui, sans-serif" }}
         >
           📜 Decode my handwriting
@@ -53,7 +45,7 @@ export default function DecodeHandwriting() {
       {/* Modal overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center"
+          className="fixed inset-0 z-[100] flex items-center justify-center allow-normal-cursor"
           style={{
             background: visible
               ? "rgba(5, 3, 1, 0.85)"
@@ -67,7 +59,7 @@ export default function DecodeHandwriting() {
           }}
         >
           <div
-            className="pointer-events-auto relative"
+            className="pointer-events-auto relative allow-normal-cursor"
             style={{
               maxWidth: "720px",
               maxHeight: "85vh",

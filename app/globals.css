@@ -33,6 +33,13 @@ canvas {
   cursor: none !important;
 }
 
+/* Allow normal cursor and text selection inside specific elements (like modals) */
+.custom-cursor-active .allow-normal-cursor,
+.custom-cursor-active .allow-normal-cursor * {
+  cursor: auto !important;
+  user-select: text !important;
+}
+
 /* Premium charcoal hand-sketched font — Architects Daughter */
 .font-handwritten {
   font-family: var(--font-architects-daughter), var(--font-architects), sans-serif;
@@ -141,6 +148,67 @@ canvas {
 .animate-flame-outer  { animation: flameOuter 0.85s ease-in-out infinite alternate; transform-origin: bottom center; }
 .ember-spark          { animation: emberRise var(--duration) ease-out forwards; }
 
+/* --- Preloader Sconce Interaction --- */
+
+/* Sconce flame ignition — scales up from ember */
+@keyframes sconceIgnite {
+  0%   { transform: scaleY(0) scaleX(0.4); opacity: 0; }
+  30%  { transform: scaleY(0.6) scaleX(0.7); opacity: 0.7; }
+  60%  { transform: scaleY(1.15) scaleX(1.05); opacity: 1; }
+  100% { transform: scaleY(1) scaleX(1); opacity: 1; }
+}
+.animate-sconce-ignite {
+  animation: sconceIgnite 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: bottom center;
+}
+
+/* Radial amber glow burst on ignition */
+@keyframes glowBurst {
+  0%   { transform: scale(0.3); opacity: 0; }
+  40%  { transform: scale(1.2); opacity: 0.7; }
+  100% { transform: scale(2.5); opacity: 0; }
+}
+.animate-glow-burst {
+  animation: glowBurst 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Gentle prompt text pulse */
+@keyframes promptPulse {
+  0%, 100% { opacity: 0.5; }
+  50%      { opacity: 0.85; }
+}
+.animate-prompt-pulse {
+  animation: promptPulse 2.8s ease-in-out infinite;
+}
+
+/* Sconce ember idle breathing */
+@keyframes emberBreathe {
+  0%, 100% { transform: scale(0.9); filter: brightness(0.7); }
+  50%      { transform: scale(1.1); filter: brightness(1.2); }
+}
+.animate-ember-breathe {
+  animation: emberBreathe 2.4s ease-in-out infinite;
+}
+
+/* Sconce ember hover — faster, brighter pulse */
+@keyframes emberHover {
+  0%, 100% { transform: scale(0.95); filter: brightness(1.0); }
+  50%      { transform: scale(1.2); filter: brightness(1.8); }
+}
+.animate-ember-hover {
+  animation: emberHover 1.0s ease-in-out infinite;
+}
+
+/* Screen warm wash after ignition */
+@keyframes warmWash {
+  0%   { opacity: 0; }
+  30%  { opacity: 0.15; }
+  100% { opacity: 0; }
+}
+.animate-warm-wash {
+  animation: warmWash 2.0s ease-out forwards;
+}
+
 /* --- Project Preview Popup --- */
 @keyframes previewPopIn {
   0%   { opacity: 0; transform: scale(0.9) translateY(8px); }
@@ -161,4 +229,50 @@ canvas {
 .contact-link-zone:hover {
   color: rgb(100, 220, 255);
   text-shadow: 0 0 10px rgba(0, 180, 255, 0.6);
+}
+
+/* Highlight for the Decode Handwriting button */
+@keyframes decodeButtonPulse {
+  0%, 100% {
+    box-shadow: 0 4px 15px rgba(0,0,0,0.6), 0 0 0 rgba(251, 146, 60, 0);
+    border-color: rgba(220, 160, 80, 0.6);
+    transform: scale(1);
+    background-color: rgba(30, 20, 10, 0.85);
+  }
+  50% {
+    box-shadow: 0 8px 25px rgba(0,0,0,0.8), 0 0 35px rgba(251, 146, 60, 0.85), inset 0 0 15px rgba(251, 146, 60, 0.3);
+    border-color: rgba(251, 191, 36, 1);
+    transform: scale(1.05);
+    background-color: rgba(50, 35, 15, 0.95);
+  }
+}
+.animate-decode-pulse {
+  animation: decodeButtonPulse 2.5s ease-in-out infinite;
+  transition: all 0.3s ease;
+}
+.animate-decode-pulse:hover {
+  animation: none !important;
+  transform: scale(1.08) !important;
+  background-color: rgba(60, 40, 15, 0.98) !important;
+  border-color: rgba(255, 210, 80, 1) !important;
+  box-shadow: 0 8px 35px rgba(251, 146, 60, 1), inset 0 0 25px rgba(251, 146, 60, 0.6) !important;
+}
+
+@keyframes decodeTextPulse {
+  0%, 100% {
+    text-shadow: 0 0 5px rgba(251, 146, 60, 0.2);
+    color: rgba(255, 251, 235, 1);
+  }
+  50% {
+    text-shadow: 0 0 15px rgba(251, 146, 60, 1), 0 0 25px rgba(251, 146, 60, 0.8);
+    color: rgba(255, 255, 255, 1);
+  }
+}
+.animate-decode-text-pulse {
+  animation: decodeTextPulse 2.5s ease-in-out infinite;
+}
+.group:hover .animate-decode-text-pulse {
+  animation: none !important;
+  text-shadow: 0 0 20px rgba(251, 146, 60, 1), 0 0 40px rgba(251, 146, 60, 0.9) !important;
+  color: rgba(255, 255, 255, 1) !important;
 }
