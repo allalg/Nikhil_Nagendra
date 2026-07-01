@@ -94,17 +94,29 @@ function FreeLookController() {
     
     let targetY = pointer.y * 32 - 3;
     let tx = 0;
-    let targetZ = isMobile ? 10.0 : 4.5; // Push back on mobile to fit horizontally
+    let targetZ = 4.5;
 
-    if (!hasMoved.current) {
-      // Automatic pan to the name and wait
-      targetY = NAME_Y;
-      tx = NAME_X;
+    if (isMobile) {
+      targetZ = 4.5; // Do NOT pull the camera back. The user wants the same view size, just reorganized content.
+      // Read Y position from native scroll container
+      const container = document.getElementById("mobile-scroll-container");
+      if (container) {
+        const maxScroll = container.scrollHeight - container.clientHeight;
+        if (maxScroll > 0) {
+          const scrollProgress = container.scrollTop / maxScroll;
+          targetY = 29 - scrollProgress * 75; // Scroll further down the taller mobile wall
+        }
+      }
     } else {
-      // Horizontal: dead-zone ramp
-      if (Math.abs(pointer.x) > dead) {
-        const t = (Math.abs(pointer.x) - dead) / (1 - dead);
-        tx = Math.sign(pointer.x) * t * maxX;
+      // Horizontal pan logic for desktop only
+      if (!hasMoved.current) {
+        targetY = NAME_Y;
+        tx = NAME_X;
+      } else {
+        if (Math.abs(pointer.x) > dead) {
+          const t = (Math.abs(pointer.x) - dead) / (1 - dead);
+          tx = Math.sign(pointer.x) * t * maxX;
+        }
       }
     }
 
@@ -119,9 +131,10 @@ function FreeLookController() {
     // Always face wall head-on
     camera.lookAt(camera.position.x, camera.position.y, 0);
 
-    // Progress: 0 = hero (y=29), 1 = contact (y=-35)
+    // Progress: 0 = hero (y=29), 1 = contact (y=-35 or lower)
     // Write to shared ref — NO setState, NO React re-render
-    scrollProgressRef.current = Math.min(Math.max((29 - camY.current) / 64, 0), 1);
+    const maxTravel = isMobile ? 75 : 64;
+    scrollProgressRef.current = Math.min(Math.max((29 - camY.current) / maxTravel, 0), 1);
 
     // Write camera position for ProjectPreview overlay
     cameraPosRef.current.x = camX.current;
@@ -132,6 +145,9 @@ function FreeLookController() {
 }
 
 export default function CinematicCanvas({ onLoaded }: CinematicCanvasProps) {
+  const { size } = useThree();
+  const isMobile = size.width < 768 || size.height > size.width;
+
   return (
     <div className="fixed inset-0 w-full h-full bg-black select-none overflow-hidden">
       <Canvas
@@ -152,8 +168,8 @@ export default function CinematicCanvas({ onLoaded }: CinematicCanvasProps) {
 
         <FreeLookController />
 
-        {/* Flat sandstone cave wall — 20×65 world units */}
-        <CaveWall />
+        {/* Flat sandstone cave wall — Taller on mobile to fit the single-column content */}
+        <CaveWall isMobile={isMobile} />
 
         {/* Surrounding stone panels — no text, fill camera edges */}
         <SurroundWalls />
