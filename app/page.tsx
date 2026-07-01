@@ -8,7 +8,6 @@ import AtmosphericOverlay from "@/components/AtmosphericOverlay";
 import CaveNav from "@/components/CaveNav";
 import ProjectPreview from "@/components/ProjectPreview";
 import DecodeHandwriting from "@/components/DecodeHandwriting";
-import MobileView from "@/components/MobileView";
 
 const CinematicCanvas = dynamic(() => import("@/components/CinematicCanvas"), {
   ssr: false,
