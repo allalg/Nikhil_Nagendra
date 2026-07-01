@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import CaveWall from "./CaveWall";
 import SurroundWalls from "./SurroundWalls";
@@ -45,6 +45,9 @@ function FreeLookController() {
   const camY     = useRef(SCONCE_0_Y);
   const hasMoved = useRef(false);
   const initialPointer = useRef<{x: number, y: number} | null>(null);
+  
+  const { size } = useThree();
+  const isMobile = size.width < 768 || size.height > size.width;
 
   useFrame(({ camera, pointer }) => {
     // ── GATE CHECK: lock camera on sconce 0 until user lights it ──────────
@@ -55,7 +58,7 @@ function FreeLookController() {
 
       camera.position.x = camX.current;
       camera.position.y = camY.current;
-      camera.position.z = 4.5;
+      camera.position.z = isMobile ? 9.0 : 4.5;
       camera.lookAt(camera.position.x, camera.position.y, 0);
 
       scrollProgressRef.current = 0;
@@ -80,7 +83,7 @@ function FreeLookController() {
         // Only unlock if the mouse actually moves away from its resting position
         const dx = pointer.x - initialPointer.current.x;
         const dy = pointer.y - initialPointer.current.y;
-        if (Math.abs(dx) > 0.03 || Math.abs(dy) > 0.03) {
+        if (Math.abs(dx) > 0.03 || Math.abs(dy) > 0.03 || isMobile) { // on mobile, immediately unlock since no pointer movement
           hasMoved.current = true;
         }
       }
@@ -91,16 +94,29 @@ function FreeLookController() {
     
     let targetY = pointer.y * 32 - 3;
     let tx = 0;
+    let targetZ = 4.5;
 
-    if (!hasMoved.current) {
-      // Automatic pan to the name and wait
-      targetY = NAME_Y;
-      tx = NAME_X;
+    if (isMobile) {
+      targetZ = 12.0; // Pull camera far back to fit 10-unit wide wall on narrow screen
+      // Read Y position from native scroll container
+      const container = document.getElementById("mobile-scroll-container");
+      if (container) {
+        const maxScroll = container.scrollHeight - container.clientHeight;
+        if (maxScroll > 0) {
+          const scrollProgress = container.scrollTop / maxScroll;
+          targetY = 29 - scrollProgress * 64; // +29 down to -35
+        }
+      }
     } else {
-      // Horizontal: dead-zone ramp
-      if (Math.abs(pointer.x) > dead) {
-        const t = (Math.abs(pointer.x) - dead) / (1 - dead);
-        tx = Math.sign(pointer.x) * t * maxX;
+      // Horizontal pan logic for desktop only
+      if (!hasMoved.current) {
+        targetY = NAME_Y;
+        tx = NAME_X;
+      } else {
+        if (Math.abs(pointer.x) > dead) {
+          const t = (Math.abs(pointer.x) - dead) / (1 - dead);
+          tx = Math.sign(pointer.x) * t * maxX;
+        }
       }
     }
 
@@ -110,7 +126,7 @@ function FreeLookController() {
 
     camera.position.x = camX.current;
     camera.position.y = camY.current;
-    camera.position.z = 4.5;
+    camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetZ, 0.05);
 
     // Always face wall head-on
     camera.lookAt(camera.position.x, camera.position.y, 0);

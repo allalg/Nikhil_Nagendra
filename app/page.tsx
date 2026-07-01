@@ -26,49 +26,42 @@ const NAV_SECTIONS = [
 ];
 
 export default function Home() {
-  // canvasReady: WebGL/3D scene is loaded and rendering
-  // entered: user has lit a sconce and the preloader has exited
   const [canvasReady, setCanvasReady] = useState(false);
   const [entered, setEntered] = useState(false);
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
 
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      // Mobile is either narrow screen or portrait orientation
+      setIsMobile(window.innerWidth < 768 || window.innerHeight > window.innerWidth);
     };
     checkMobile();
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  useEffect(() => {
-    // Mobile doesn't need to wait for a 3D canvas to load
-    if (isMobile) {
-      setCanvasReady(true);
-    }
-  }, [isMobile]);
-
   const handleEnter = useCallback(() => {
     setEntered(true);
   }, []);
 
-  // Prevent hydration mismatch by rendering a simple black screen until we know the device type
-  if (isMobile === null) {
-    return <main className="w-screen h-screen bg-black" />;
-  }
-
-  if (isMobile) {
-    return (
-      <main className="relative w-screen h-screen overflow-hidden bg-black select-none">
-        <MobileView entered={entered} onEnter={handleEnter} />
-        {/* Decode handwriting popup still accessible on mobile */}
-        <DecodeHandwriting />
-      </main>
-    );
-  }
-
   return (
-    <main className="relative w-screen h-screen overflow-hidden bg-black select-none custom-cursor-active">
+    <main className="relative w-screen h-[100dvh] overflow-hidden bg-black select-none custom-cursor-active">
+      
+      {/* 
+        Native Mobile Scroll Container 
+        Appears only after entering the cave.
+        Allows native browser vertical scrolling which we sync to the 3D camera.
+      */}
+      {isMobile && entered && (
+        <div 
+          id="mobile-scroll-container"
+          className="absolute inset-0 z-40 overflow-y-auto"
+          style={{ WebkitOverflowScrolling: 'touch' }}
+        >
+          <div className="w-full h-[700vh]" />
+        </div>
+      )}
+
       <Preloader isLoading={!canvasReady} onEnter={handleEnter} />
 
       {/* Full-screen 3D cave */}
