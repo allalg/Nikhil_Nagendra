@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import CaveWall from "./CaveWall";
 import SurroundWalls from "./SurroundWalls";
@@ -14,7 +14,6 @@ import { sconceGateState } from "./sconceGateState";
 
 interface CinematicCanvasProps {
   onLoaded: () => void;
-  isMobile: boolean;
 }
 
 // ── MOUSE-DRIVEN FREE-LOOK CAMERA ─────────────────────────────────────────────
@@ -46,9 +45,6 @@ function FreeLookController() {
   const camY     = useRef(SCONCE_0_Y);
   const hasMoved = useRef(false);
   const initialPointer = useRef<{x: number, y: number} | null>(null);
-  
-  const { size } = useThree();
-  const isMobile = size.width < 768 || size.height > size.width;
 
   useFrame(({ camera, pointer }) => {
     // ── GATE CHECK: lock camera on sconce 0 until user lights it ──────────
@@ -59,7 +55,7 @@ function FreeLookController() {
 
       camera.position.x = camX.current;
       camera.position.y = camY.current;
-      camera.position.z = isMobile ? 9.0 : 4.5;
+      camera.position.z = 4.5;
       camera.lookAt(camera.position.x, camera.position.y, 0);
 
       scrollProgressRef.current = 0;
@@ -84,7 +80,7 @@ function FreeLookController() {
         // Only unlock if the mouse actually moves away from its resting position
         const dx = pointer.x - initialPointer.current.x;
         const dy = pointer.y - initialPointer.current.y;
-        if (Math.abs(dx) > 0.03 || Math.abs(dy) > 0.03 || isMobile) { // on mobile, immediately unlock since no pointer movement
+        if (Math.abs(dx) > 0.03 || Math.abs(dy) > 0.03) {
           hasMoved.current = true;
         }
       }
@@ -95,29 +91,16 @@ function FreeLookController() {
     
     let targetY = pointer.y * 32 - 3;
     let tx = 0;
-    let targetZ = 4.5;
 
-    if (isMobile) {
-      targetZ = 4.5; // Do NOT pull the camera back. The user wants the same view size, just reorganized content.
-      // Read Y position from native scroll container
-      const container = document.getElementById("mobile-scroll-container");
-      if (container) {
-        const maxScroll = container.scrollHeight - container.clientHeight;
-        if (maxScroll > 0) {
-          const scrollProgress = container.scrollTop / maxScroll;
-          targetY = 29 - scrollProgress * 75; // Scroll further down the taller mobile wall
-        }
-      }
+    if (!hasMoved.current) {
+      // Automatic pan to the name and wait
+      targetY = NAME_Y;
+      tx = NAME_X;
     } else {
-      // Horizontal pan logic for desktop only
-      if (!hasMoved.current) {
-        targetY = NAME_Y;
-        tx = NAME_X;
-      } else {
-        if (Math.abs(pointer.x) > dead) {
-          const t = (Math.abs(pointer.x) - dead) / (1 - dead);
-          tx = Math.sign(pointer.x) * t * maxX;
-        }
+      // Horizontal: dead-zone ramp
+      if (Math.abs(pointer.x) > dead) {
+        const t = (Math.abs(pointer.x) - dead) / (1 - dead);
+        tx = Math.sign(pointer.x) * t * maxX;
       }
     }
 
@@ -127,15 +110,14 @@ function FreeLookController() {
 
     camera.position.x = camX.current;
     camera.position.y = camY.current;
-    camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetZ, 0.05);
+    camera.position.z = 4.5;
 
     // Always face wall head-on
     camera.lookAt(camera.position.x, camera.position.y, 0);
 
-    // Progress: 0 = hero (y=29), 1 = contact (y=-35 or lower)
+    // Progress: 0 = hero (y=29), 1 = contact (y=-35)
     // Write to shared ref — NO setState, NO React re-render
-    const maxTravel = isMobile ? 75 : 64;
-    scrollProgressRef.current = Math.min(Math.max((29 - camY.current) / maxTravel, 0), 1);
+    scrollProgressRef.current = Math.min(Math.max((29 - camY.current) / 64, 0), 1);
 
     // Write camera position for ProjectPreview overlay
     cameraPosRef.current.x = camX.current;
@@ -145,7 +127,7 @@ function FreeLookController() {
   return null;
 }
 
-export default function CinematicCanvas({ onLoaded, isMobile }: CinematicCanvasProps) {
+export default function CinematicCanvas({ onLoaded }: CinematicCanvasProps) {
   return (
     <div className="fixed inset-0 w-full h-full bg-black select-none overflow-hidden">
       <Canvas
@@ -166,8 +148,8 @@ export default function CinematicCanvas({ onLoaded, isMobile }: CinematicCanvasP
 
         <FreeLookController />
 
-        {/* Flat sandstone cave wall — Taller on mobile to fit the single-column content */}
-        <CaveWall isMobile={isMobile} />
+        {/* Flat sandstone cave wall — 20×65 world units */}
+        <CaveWall />
 
         {/* Surrounding stone panels — no text, fill camera edges */}
         <SurroundWalls />

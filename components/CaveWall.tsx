@@ -66,7 +66,7 @@ const getGeology = (px: number, py: number) => {
   return { totalHeight, crackDepth, strataY, h };
 };
 
-export default function CaveWall({ isMobile = false }: { isMobile?: boolean }) {
+export default function CaveWall() {
   const [textures, setTextures] = useState<{
     albedoMap: THREE.CanvasTexture;
     normalMap: THREE.CanvasTexture;
@@ -93,9 +93,9 @@ export default function CaveWall({ isMobile = false }: { isMobile?: boolean }) {
       // Quality is identical — we bilinearly upscale to 1024×2560 anyway,
       // and the stone doesn't need high-freq detail at the base level.
       const baseW = 256;
-      const baseH = isMobile ? 800 : 640;
+      const baseH = 640;
       const finalSizeW = 1024;
-      const finalSizeH = isMobile ? 3200 : 2560;
+      const finalSizeH = 2560;
 
       const baseHeight = new Float32Array(baseW * baseH);
       const baseCrack = new Float32Array(baseW * baseH);
@@ -544,444 +544,334 @@ export default function CaveWall({ isMobile = false }: { isMobile?: boolean }) {
         drawWobblyText(albedoCtx, finalRoughnessCtx, "♪ cave ambience", 84, 498, SM);
 
         // ═══════════════════════════════════════════════════
-        // SECTION 1 — ABOUT (canvas y: 550–900)
-        // Camera sees this at scrollProgress ≈ 0.25
+        // SECTION 1 — ABOUT ME (canvas y: 560–900)
+        // Camera sees this at scrollProgress ≈ 0.24
         // ═══════════════════════════════════════════════════
 
-        let currentY = 570;
         // Separator
-        drawWobblyLine(albedoCtx, finalRoughnessCtx, 60, currentY - 35, 960, currentY - 35, 1.0);
-        drawWobblyText(albedoCtx, finalRoughnessCtx, "01) ABOUT", 80, currentY, H2);
-        
-        currentY += 45;
+        drawWobblyLine(albedoCtx, finalRoughnessCtx, 60, 535, 960, 535, 1.0);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "01) ABOUT", 80, 570, H2);
 
-        // Bio
-        drawWobblyText(albedoCtx, finalRoughnessCtx, "computer science engineer.", 80, currentY, B);
-        drawWobblyText(albedoCtx, finalRoughnessCtx, "backgrounds in medicine & finance.", 80, currentY + 20, B);
-        drawWobblyText(albedoCtx, finalRoughnessCtx, "building human-centered technology.", 80, currentY + 40, B);
-
-        currentY += 85;
+        // Bio (left)
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "computer science engineer.", 80, 615, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "backgrounds in medicine & finance.", 80, 635, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "building human-centered technology.", 80, 655, B);
 
         // Interests (left column)
         const intX = 80;
-        drawMountainIcon(albedoCtx, finalRoughnessCtx, intX + 9, currentY, 18);
-        drawWobblyText(albedoCtx, finalRoughnessCtx, "Explorer — treks, nature, wandering", intX + 28, currentY + 3, B);
+        drawMountainIcon(albedoCtx, finalRoughnessCtx, intX + 9, 700, 18);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "Explorer — treks, nature, wandering", intX + 28, 703, B);
 
-        currentY += 30;
         const gearX = intX; // gear drawn as box with lines
-        drawDatabaseIcon(albedoCtx, finalRoughnessCtx, gearX + 9, currentY, 18);
-        drawWobblyText(albedoCtx, finalRoughnessCtx, "Builder — systems, hackathons, ideas", gearX + 28, currentY + 3, B);
+        drawDatabaseIcon(albedoCtx, finalRoughnessCtx, gearX + 9, 730, 18);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "Builder — systems, hackathons, ideas", gearX + 28, 733, B);
 
-        currentY += 30;
-        drawBrushIcon(albedoCtx, finalRoughnessCtx, intX + 9, currentY, 18);
-        drawWobblyText(albedoCtx, finalRoughnessCtx, "Creative — painting, origami, cooking", intX + 28, currentY + 3, B);
+        drawBrushIcon(albedoCtx, finalRoughnessCtx, intX + 9, 760, 18);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "Creative — painting, origami, cooking", intX + 28, 763, B);
 
-        currentY += 30;
-        drawEyeIcon(albedoCtx, finalRoughnessCtx, intX + 9, currentY, 18);
-        drawWobblyText(albedoCtx, finalRoughnessCtx, "Thinker — philosophy, Vedanta, psych", intX + 28, currentY + 3, B);
+        drawEyeIcon(albedoCtx, finalRoughnessCtx, intX + 9, 790, 18);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "Thinker — philosophy, Vedanta, psych", intX + 28, 793, B);
 
-        currentY += 30;
-        drawHeartIcon(albedoCtx, finalRoughnessCtx, intX + 9, currentY, 16);
-        drawWobblyText(albedoCtx, finalRoughnessCtx, "Humanitarian — NGOs, healthcare empathy", intX + 28, currentY + 3, B);
+        drawHeartIcon(albedoCtx, finalRoughnessCtx, intX + 9, 820, 16);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "Humanitarian — NGOs, healthcare empathy", intX + 28, 823, B);
 
-        // Personal handwritten side notes
-        const notesX = isMobile ? 80 : 560;
-        let notesY = isMobile ? currentY + 50 : 620;
-        const notesSpacing = isMobile ? 30 : 40;
-        
-        drawWobblyText(albedoCtx, finalRoughnessCtx, "books > people (most days)", notesX, notesY, IT);
-        drawWobblyText(albedoCtx, finalRoughnessCtx, "good food. better mood.", notesX, notesY + notesSpacing, IT);
-        drawWobblyText(albedoCtx, finalRoughnessCtx, "ideas that escaped my head.", notesX, notesY + notesSpacing * 2, IT);
-        drawWobblyText(albedoCtx, finalRoughnessCtx, "a little bit of everything", notesX, notesY + notesSpacing * 3, IT);
-        drawWobblyText(albedoCtx, finalRoughnessCtx, "(in a good way).", notesX, notesY + (isMobile ? notesSpacing * 3 + 20 : notesSpacing * 3 + 20), IT);
-        drawWobblyText(albedoCtx, finalRoughnessCtx, "terrible handwriting since birth.", notesX, notesY + notesSpacing * 4 + 10, IT);
+        // Personal handwritten side notes (right side)
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "books > people (most days)", 560, 620, IT);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "good food. better mood.", 560, 660, IT);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "ideas that escaped my head.", 560, 700, IT);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "a little bit of everything", 560, 740, IT);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "(in a good way).", 560, 760, IT);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "terrible handwriting since birth.", 560, 800, IT);
 
-        // Exploring figure on a path
-        let figY = isMobile ? notesY + notesSpacing * 6 : 845;
-        let figX = isMobile ? 80 : 560;
-        drawWobblyCurve(albedoCtx, finalRoughnessCtx, [[figX, figY + 25], [figX + 90, figY + 5], [figX + 160, figY + 30], [figX + 250, figY + 10], [figX + 340, figY + 25]], 3.0);
-        drawStickFigure(albedoCtx, finalRoughnessCtx, figX + 100, figY, 22, 0.9);
-        drawWobblyText(albedoCtx, finalRoughnessCtx, "still exploring.", figX + 120, figY + 40, IT);
-
-        currentY = figY + 100;
+        // Exploring figure on a path (right)
+        drawWobblyCurve(albedoCtx, finalRoughnessCtx, [[560, 870], [650, 850], [720, 875], [810, 855], [900, 870]], 3.0);
+        drawStickFigure(albedoCtx, finalRoughnessCtx, 660, 845, 22, 0.9);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "still exploring.", 680, 885, IT);
 
         // ═══════════════════════════════════════════════════
-        // SECTION 2 — PROJECTS
+        // SECTION 2 — PROJECTS (canvas y: 940–1310)
+        // Camera sees this at scrollProgress ≈ 0.47
         // ═══════════════════════════════════════════════════
 
-        if (!isMobile) currentY = 920; // reset for desktop exactness
+        drawWobblyLine(albedoCtx, finalRoughnessCtx, 60, 920, 960, 920, 1.0);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "02) PROJECTS", 80, 955, H2);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "ideas. code. impact.", 370, 958, IT);
 
-        drawWobblyLine(albedoCtx, finalRoughnessCtx, 60, currentY, 960, currentY, 1.0);
-        drawWobblyText(albedoCtx, finalRoughnessCtx, "02) PROJECTS", 80, currentY + 35, H2);
-        drawWobblyText(albedoCtx, finalRoughnessCtx, "ideas. code. impact.", isMobile ? 80 : 370, isMobile ? currentY + 65 : currentY + 38, IT);
+        // Row 1 — 3 projects (y≈990–1100)
+        // P1: MediXpress
+        const p1X = 80;
+        drawAmbulanceIcon(albedoCtx, finalRoughnessCtx, p1X + 9, 1005, 18);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "MEDI-XPRESS", p1X + 32, 1000, H3);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "ambulance-hospital ", p1X + 32, 1020, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "coordination platform", p1X + 32, 1038, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "healthcare chaos → scalable", p1X + 14, 1060, IT);
 
-        let pY = currentY + (isMobile ? 110 : 80);
-        
-        // Helper for drawing a project
-        const drawProject = (title: string, r1: string, r2: string, tag: string, pX: number, py: number, iconFn: Function) => {
-            iconFn(albedoCtx, finalRoughnessCtx, pX + 9, py + 5, 18);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, title, pX + 32, py, H3);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, r1, pX + 32, py + 20, B);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, r2, pX + 32, py + 38, B);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, tag, pX + 14, py + 60, IT);
-        };
+        // P2: GAMEATHON
+        const p2X = 365;
+        drawControllerIcon(albedoCtx, finalRoughnessCtx, p2X + 9, 1005, 18);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "GAMEATHON", p2X + 32, 1000, H3);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "Multi-agent game logic", p2X + 32, 1020, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "built under extreme pressure", p2X + 32, 1038, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "3hr sleep. questionable decisions.", p2X + 14, 1060, IT);
 
-        if (isMobile) {
-            drawProject("MEDI-XPRESS", "ambulance-hospital", "coordination platform", "healthcare chaos → scalable", 80, pY, drawAmbulanceIcon);
-            pY += 100;
-            drawProject("GAMEATHON", "Multi-agent game logic", "built under extreme pressure", "3hr sleep. questionable decisions.", 80, pY, drawControllerIcon);
-            pY += 100;
-            drawProject("TRADING BOT", "Binance Futures testnet bot", "market, limit & stop-limit", "paper profits. real lessons.", 80, pY, drawDatabaseIcon);
-            pY += 100;
-            drawProject("FINDB", "High-throughput ledger DBMS", "for financial consolidation", "CA trauma → useful at last.", 80, pY, drawDatabaseIcon);
-            pY += 100;
-            drawProject("ACIS-X", "Real-time credit intelligence", "multi-agent risk scoring", "signals in. decisions out. no sleep.", 80, pY, drawDatabaseIcon);
-            pY += 100;
-            drawProject("RAG ENGINE", "Vector + graph retrieval", "ChromaDB meets NetworkX", "documents finally make sense.", 80, pY, drawEyeIcon);
-            pY += 100;
-            currentY = pY + 20;
-        } else {
-            drawProject("MEDI-XPRESS", "ambulance-hospital", "coordination platform", "healthcare chaos → scalable", 80, pY, drawAmbulanceIcon);
-            drawProject("GAMEATHON", "Multi-agent game logic", "built under extreme pressure", "3hr sleep. questionable decisions.", 365, pY, drawControllerIcon);
-            drawProject("TRADING BOT", "Binance Futures testnet bot", "market, limit & stop-limit", "paper profits. real lessons.", 660, pY, drawDatabaseIcon);
-            
-            pY += 150;
-            drawProject("FINDB", "High-throughput ledger DBMS", "for financial consolidation", "CA trauma → useful at last.", 80, pY, drawDatabaseIcon);
-            drawProject("ACIS-X", "Real-time credit intelligence", "multi-agent risk scoring", "signals in. decisions out. no sleep.", 365, pY, drawDatabaseIcon);
-            drawProject("RAG ENGINE", "Vector + graph retrieval", "ChromaDB meets NetworkX", "documents finally make sense.", 660, pY, drawEyeIcon);
-            currentY = pY + 100;
-        }
+        // P3: Trading Bot
+        const p3X = 660;
+        drawDatabaseIcon(albedoCtx, finalRoughnessCtx, p3X + 9, 1005, 18);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "TRADING BOT", p3X + 32, 1000, H3);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "Binance Futures testnet bot", p3X + 32, 1020, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "market, limit & stop-limit orders", p3X + 32, 1038, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "paper profits. real lessons.", p3X + 14, 1060, IT);
 
+        // Row 2 — 2 projects (y≈1140–1250)
+        // P4: FinDB
+        drawDatabaseIcon(albedoCtx, finalRoughnessCtx, p1X + 9, 1155, 18);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "FINDB", p1X + 32, 1150, H3);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "High-throughput ledger DBMS", p1X + 32, 1170, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "for financial consolidation", p1X + 32, 1188, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "CA trauma → useful at last.", p1X + 14, 1210, IT);
+
+        // P5: ACIS-X — Autonomous Credit Intelligence System
+        drawDatabaseIcon(albedoCtx, finalRoughnessCtx, p2X + 9, 1155, 18);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "ACIS-X", p2X + 32, 1150, H3);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "Real-time credit intelligence", p2X + 32, 1170, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "multi-agent risk scoring on Kafka", p2X + 32, 1188, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "signals in. decisions out. no sleep.", p2X + 14, 1210, IT);
+
+        // P6: RAG ENGINE — Hybrid Vector + Graph Retrieval
+        drawEyeIcon(albedoCtx, finalRoughnessCtx, p3X + 9, 1155, 18);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "RAG ENGINE", p3X + 32, 1150, H3);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "Vector + graph retrieval", p3X + 32, 1170, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "ChromaDB meets NetworkX", p3X + 32, 1188, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "documents finally make sense.", p3X + 14, 1210, IT);
 
         // ═══════════════════════════════════════════════════
-        // SECTION 3 — SKILLS & ACHIEVEMENTS
+        // SECTION 3 — SKILLS & ACHIEVEMENTS (canvas y: 1250–1620)
+        // Camera sees this at scrollProgress ≈ 0.55
         // ═══════════════════════════════════════════════════
 
-        if (!isMobile) currentY = 1250;
+        drawWobblyLine(albedoCtx, finalRoughnessCtx, 60, 1250, 960, 1250, 1.0);
+        // ── TOOLBOX (Full Width) ──
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "TOOLBOX", 80, 1285, H3);
 
-        drawWobblyLine(albedoCtx, finalRoughnessCtx, 60, currentY, 960, currentY, 1.0);
-        drawWobblyText(albedoCtx, finalRoughnessCtx, "TOOLBOX", 80, currentY + 35, H3);
+        let ySkill = 1325;
 
-        let ySkill = currentY + 75;
-        
-        const drawSkill = (title: string, x1: number, y1: number, boxW: number, text: string) => {
-            drawWobblyText(albedoCtx, finalRoughnessCtx, title, x1, y1, SM);
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, x1, y1 + 8, boxW, 26, 1.5);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, text, x1 + 10, y1 + 26, B);
-        };
+        // Row 1: Systems & Architecture
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "systems & architecture", 80, ySkill, SM);
+        drawWobblyBox(albedoCtx, finalRoughnessCtx, 80, ySkill + 8, 165, 26, 1.5);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "Dist Systems", 90, ySkill + 26, B);
 
-        if (isMobile) {
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "systems & architecture", 80, ySkill, SM);
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 80, ySkill + 8, 165, 26, 1.5);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "Dist Systems", 90, ySkill + 26, B);
-            ySkill += 45;
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 80, ySkill + 8, 160, 26, 1.5);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "Event-Driven", 90, ySkill + 26, B);
-            ySkill += 45;
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 80, ySkill + 8, 155, 26, 1.5);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "Agent-Based", 90, ySkill + 26, B);
-            ySkill += 55;
+        drawWobblyBox(albedoCtx, finalRoughnessCtx, 300, ySkill + 8, 160, 26, 1.5);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "Event-Driven", 310, ySkill + 26, B);
 
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "artificial intelligence", 80, ySkill, SM);
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 80, ySkill + 8, 185, 26, 1.5);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "AI Agent Design", 90, ySkill + 26, B);
-            ySkill += 45;
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 80, ySkill + 8, 140, 26, 1.5);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "Prompt Eng", 90, ySkill + 26, B);
-            ySkill += 55;
+        drawWobblyBox(albedoCtx, finalRoughnessCtx, 510, ySkill + 8, 155, 26, 1.5);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "Agent-Based", 520, ySkill + 26, B);
+        ySkill += 50;
 
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "backend & data", 80, ySkill, SM);
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 80, ySkill + 8, 180, 26, 1.5);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "SQL DB Design", 90, ySkill + 26, B);
-            ySkill += 45;
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 80, ySkill + 8, 135, 26, 1.5);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "REST APIs", 90, ySkill + 26, B);
-            ySkill += 55;
-            
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "engineering core", 80, ySkill, SM);
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 80, ySkill + 8, 96, 26, 1.5);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "Python", 90, ySkill + 26, B);
-            ySkill += 45;
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 80, ySkill + 8, 88, 26, 1.5);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "JS/TS", 90, ySkill + 26, B);
-            ySkill += 45;
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 80, ySkill + 8, 130, 26, 1.5);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "React/Next", 90, ySkill + 26, B);
-            ySkill += 65;
-        } else {
-            // Row 1
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "systems & architecture", 80, ySkill, SM);
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 80, ySkill + 8, 165, 26, 1.5);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "Dist Systems", 90, ySkill + 26, B);
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 300, ySkill + 8, 160, 26, 1.5);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "Event-Driven", 310, ySkill + 26, B);
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 510, ySkill + 8, 155, 26, 1.5);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "Agent-Based", 520, ySkill + 26, B);
-            ySkill += 50;
+        // Row 2: AI
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "artificial intelligence", 80, ySkill, SM);
+        drawWobblyBox(albedoCtx, finalRoughnessCtx, 80, ySkill + 8, 185, 26, 1.5);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "AI Agent Design", 90, ySkill + 26, B);
 
-            // Row 2
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "artificial intelligence", 80, ySkill, SM);
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 80, ySkill + 8, 185, 26, 1.5);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "AI Agent Design", 90, ySkill + 26, B);
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 300, ySkill + 8, 140, 26, 1.5);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "Prompt Eng", 310, ySkill + 26, B);
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 510, ySkill + 8, 180, 26, 1.5);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "Gen AI Systems", 520, ySkill + 26, B);
-            ySkill += 50;
+        drawWobblyBox(albedoCtx, finalRoughnessCtx, 300, ySkill + 8, 140, 26, 1.5);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "Prompt Eng", 310, ySkill + 26, B);
 
-            // Row 3
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "backend & data", 80, ySkill, SM);
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 80, ySkill + 8, 180, 26, 1.5);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "SQL DB Design", 90, ySkill + 26, B);
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 300, ySkill + 8, 135, 26, 1.5);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "REST APIs", 310, ySkill + 26, B);
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 510, ySkill + 8, 160, 26, 1.5);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "Auth Systems", 520, ySkill + 26, B);
-            ySkill += 50;
+        drawWobblyBox(albedoCtx, finalRoughnessCtx, 510, ySkill + 8, 180, 26, 1.5);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "Gen AI Systems", 520, ySkill + 26, B);
+        ySkill += 50;
 
-            // Row 4
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "security & finance", 80, ySkill, SM);
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 80, ySkill + 8, 180, 26, 1.5);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "Threat Modeling", 90, ySkill + 26, B);
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 300, ySkill + 8, 230, 26, 1.5);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "Cyber Fundamentals", 310, ySkill + 26, B);
-            ySkill += 50;
+        // Row 3: Backend
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "backend & data", 80, ySkill, SM);
+        drawWobblyBox(albedoCtx, finalRoughnessCtx, 80, ySkill + 8, 180, 26, 1.5);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "SQL DB Design", 90, ySkill + 26, B);
 
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 80, ySkill + 8, 380, 26, 1.5);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "Accounting & Finance Fundamentals", 90, ySkill + 26, B);
-            ySkill += 50;
+        drawWobblyBox(albedoCtx, finalRoughnessCtx, 300, ySkill + 8, 135, 26, 1.5);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "REST APIs", 310, ySkill + 26, B);
 
-            // Row 5
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "engineering core", 80, ySkill, SM);
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 80, ySkill + 8, 96, 26, 1.5);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "Python", 90, ySkill + 26, B);
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 200, ySkill + 8, 88, 26, 1.5);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "JS/TS", 210, ySkill + 26, B);
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 300, ySkill + 8, 80, 26, 1.5);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "C", 310, ySkill + 26, B);
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 400, ySkill + 8, 130, 26, 1.5);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "React/Next", 410, ySkill + 26, B);
-            ySkill += 60;
-        }
+        drawWobblyBox(albedoCtx, finalRoughnessCtx, 510, ySkill + 8, 160, 26, 1.5);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "Auth Systems", 520, ySkill + 26, B);
+        ySkill += 50;
+
+        // Row 4: Security
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "security & finance", 80, ySkill, SM);
+        drawWobblyBox(albedoCtx, finalRoughnessCtx, 80, ySkill + 8, 180, 26, 1.5);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "Threat Modeling", 90, ySkill + 26, B);
+
+        drawWobblyBox(albedoCtx, finalRoughnessCtx, 300, ySkill + 8, 230, 26, 1.5);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "Cyber Fundamentals", 310, ySkill + 26, B);
+        ySkill += 50;
+
+        drawWobblyBox(albedoCtx, finalRoughnessCtx, 80, ySkill + 8, 380, 26, 1.5);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "Accounting & Finance Fundamentals", 90, ySkill + 26, B);
+        ySkill += 50;
+
+        // Row 5: Core
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "engineering core", 80, ySkill, SM);
+        drawWobblyBox(albedoCtx, finalRoughnessCtx, 80, ySkill + 8, 96, 26, 1.5);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "Python", 90, ySkill + 26, B);
+
+        drawWobblyBox(albedoCtx, finalRoughnessCtx, 200, ySkill + 8, 88, 26, 1.5);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "JS/TS", 210, ySkill + 26, B);
+
+        drawWobblyBox(albedoCtx, finalRoughnessCtx, 300, ySkill + 8, 80, 26, 1.5);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "C", 310, ySkill + 26, B);
+
+        drawWobblyBox(albedoCtx, finalRoughnessCtx, 400, ySkill + 8, 130, 26, 1.5);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "React/Next", 410, ySkill + 26, B);
+        ySkill += 60; // Extra gap before Milestones
 
         // ── MILESTONES (Full Width) ──
         drawWobblyText(albedoCtx, finalRoughnessCtx, "MILESTONES", 80, ySkill, H3);
         ySkill += 40;
 
-        if (isMobile) {
-            drawControllerIcon(albedoCtx, finalRoughnessCtx, 90, ySkill, 18);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "Gameathon — 3rd Place", 114, ySkill + 3, B);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "competitive game dev.", 114, ySkill + 23, IT);
-            ySkill += 60;
+        // Row 1
+        drawControllerIcon(albedoCtx, finalRoughnessCtx, 90, ySkill, 18);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "Gameathon — 3rd Place", 114, ySkill + 3, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "competitive game dev.", 114, ySkill + 23, IT);
 
-            drawGridBoardIcon(albedoCtx, finalRoughnessCtx, 90, ySkill, 18);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "CTF — 6th / 36 Teams", 114, ySkill + 3, B);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "cybersec & problem solving.", 114, ySkill + 23, IT);
-            ySkill += 60;
+        drawGridBoardIcon(albedoCtx, finalRoughnessCtx, 510, ySkill, 18);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "CTF — 6th / 36 Teams", 534, ySkill + 3, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "cybersec & problem solving.", 534, ySkill + 23, IT);
+        ySkill += 60;
 
-            drawLaptopIcon(albedoCtx, finalRoughnessCtx, 90, ySkill, 18);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "Multiple Hackathons", 114, ySkill + 3, B);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "innovation & rapid prototyping.", 114, ySkill + 23, IT);
-            ySkill += 60;
+        // Row 2
+        drawLaptopIcon(albedoCtx, finalRoughnessCtx, 90, ySkill, 18);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "Multiple Hackathons", 114, ySkill + 3, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "innovation & rapid prototyping.", 114, ySkill + 23, IT);
 
-            drawMountainIcon(albedoCtx, finalRoughnessCtx, 90, ySkill, 18);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "Himalayan Treks (x5)", 114, ySkill + 3, B);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "reached 5200m. nature >> code.", 114, ySkill + 23, IT);
-            ySkill += 60;
+        drawMountainIcon(albedoCtx, finalRoughnessCtx, 510, ySkill, 18);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "Himalayan Treks (x5)", 534, ySkill + 3, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "reached 5200m. nature >> code.", 534, ySkill + 23, IT);
+        ySkill += 60;
 
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "skills are just proof that you showed up.", 80, ySkill, IT);
-            ySkill += 50;
-        } else {
-            drawControllerIcon(albedoCtx, finalRoughnessCtx, 90, ySkill, 18);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "Gameathon — 3rd Place", 114, ySkill + 3, B);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "competitive game dev.", 114, ySkill + 23, IT);
-
-            drawGridBoardIcon(albedoCtx, finalRoughnessCtx, 510, ySkill, 18);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "CTF — 6th / 36 Teams", 534, ySkill + 3, B);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "cybersec & problem solving.", 534, ySkill + 23, IT);
-            ySkill += 60;
-
-            drawLaptopIcon(albedoCtx, finalRoughnessCtx, 90, ySkill, 18);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "Multiple Hackathons", 114, ySkill + 3, B);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "innovation & rapid prototyping.", 114, ySkill + 23, IT);
-
-            drawMountainIcon(albedoCtx, finalRoughnessCtx, 510, ySkill, 18);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "Himalayan Treks (x5)", 534, ySkill + 3, B);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "reached 5200m. nature >> code.", 534, ySkill + 23, IT);
-            ySkill += 60;
-
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "skills are just proof that you showed up.", 300, ySkill, IT);
-        }
+        // Bottom annotation
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "skills are just proof that you showed up.", 300, ySkill, IT);
 
         // ═══════════════════════════════════════════════════
-        // SECTION 4 — JOURNEY 
+        // PUSH DOWN SECTIONS 4, 5, 6
+        // We translate the canvas coordinate system down by 170px
+        // ═══════════════════════════════════════════════════
+        albedoCtx.save();
+        finalRoughnessCtx.save();
+        albedoCtx.translate(0, 170);
+        finalRoughnessCtx.translate(0, 170);
+
+        // ═══════════════════════════════════════════════════
+        // SECTION 4 — JOURNEY (canvas y: 1640–1940)
+        // Camera sees this at scrollProgress ≈ 0.70
         // ═══════════════════════════════════════════════════
 
-        if (!isMobile) ySkill = 1640;
-
-        drawWobblyLine(albedoCtx, finalRoughnessCtx, 60, ySkill + 5, 960, ySkill + 5, 1.0);
-        drawWobblyText(albedoCtx, finalRoughnessCtx, "04) JOURNEY", 80, ySkill + 40, H2);
-        drawWobblyText(albedoCtx, finalRoughnessCtx, "not a resume. a real path.", isMobile ? 80 : 300, isMobile ? ySkill + 70 : ySkill + 43, IT);
-
-        let pathY = ySkill + 90;
+        drawWobblyLine(albedoCtx, finalRoughnessCtx, 60, 1645, 960, 1645, 1.0);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "04) JOURNEY", 80, 1680, H2);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "not a resume. a real path.", 300, 1683, IT);
 
         // Winding cave path
         drawWobblyCurve(albedoCtx, finalRoughnessCtx, [
-          [80, pathY + 50], [160, pathY + 30], [250, pathY + 70], [350, pathY + 40], [450, pathY + 80], [560, pathY + 45], [660, pathY + 75], [770, pathY + 40], [880, pathY + 75], [960, pathY + 50]
+          [80, 1730], [160, 1710], [250, 1750], [350, 1720], [450, 1760], [560, 1725], [660, 1755], [770, 1720], [880, 1755], [960, 1730]
         ], 4.0);
 
-        if (isMobile) {
-            // Stack waypoints on mobile
-            drawCaduceusIcon(albedoCtx, finalRoughnessCtx, 155, pathY + 25, 22);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "MBBS", 205, pathY + 30, H3);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "2 years of medicine.", 110, pathY + 120, B);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "empathy carved deep.", 110, pathY + 138, B);
-            drawStickFigure(albedoCtx, finalRoughnessCtx, 200, pathY + 40, 16, 0.7);
+        // Waypoint 1: Medicine
+        drawCaduceusIcon(albedoCtx, finalRoughnessCtx, 155, 1705, 22);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "MBBS", 205, 1710, H3);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "2 years of medicine.", 110, 1800, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "empathy carved deep.", 110, 1818, B);
+        drawStickFigure(albedoCtx, finalRoughnessCtx, 200, 1720, 16, 0.7);
 
-            pathY += 150;
-            drawWiltedFlowerIcon(albedoCtx, finalRoughnessCtx, 155, pathY + 25, 22);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "THE PLOT TWIST", 205, pathY + 30, H3);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "battles fought. ground found.", 110, pathY + 120, B);
-            drawStickFigure(albedoCtx, finalRoughnessCtx, 195, pathY + 40, 16, 0.7);
+        // Waypoint 2: Storm (Depression/Anxiety)
+        drawWiltedFlowerIcon(albedoCtx, finalRoughnessCtx, 440, 1755, 22);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "THE PLOT TWIST", 350, 1730, H3);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "battles fought.", 380, 1800, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "ground eventually found.", 380, 1818, B);
+        drawStickFigure(albedoCtx, finalRoughnessCtx, 480, 1750, 16, 0.7);
 
-            pathY += 150;
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 155, pathY + 15, 22, 24, 1.5);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "CA", 160, pathY + 5, H3);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "foundation + inter G1.", 110, pathY + 120, B);
-            drawStickFigure(albedoCtx, finalRoughnessCtx, 215, pathY + 50, 16, 0.7);
+        // Waypoint 3: Finance
+        drawWobblyBox(albedoCtx, finalRoughnessCtx, 642, 1710, 22, 24, 1.5);
+        drawWobblyLine(albedoCtx, finalRoughnessCtx, 645, 1718, 660, 1718, 0.8);
+        drawWobblyLine(albedoCtx, finalRoughnessCtx, 645, 1726, 660, 1726, 0.8);
+        drawWobblyLine(albedoCtx, finalRoughnessCtx, 645, 1734, 655, 1734, 0.8);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "CA", 650, 1685, H3);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "foundation + inter G1.", 600, 1800, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "discipline as survival.", 600, 1818, B);
+        drawStickFigure(albedoCtx, finalRoughnessCtx, 700, 1745, 16, 0.7);
 
-            pathY += 150;
-            drawLaptopIcon(albedoCtx, finalRoughnessCtx, 155, pathY + 25, 22);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "B.E CSE", 205, pathY + 30, H3);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "building now. a better direction.", 110, pathY + 120, B);
-            drawStickFigure(albedoCtx, finalRoughnessCtx, 195, pathY + 40, 16, 0.7);
+        // Waypoint 4: Engineering
+        drawLaptopIcon(albedoCtx, finalRoughnessCtx, 855, 1715, 22);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "B.E CSE", 828, 1685, H3);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "building now.", 820, 1800, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "a better direction.", 820, 1818, B);
+        drawStickFigure(albedoCtx, finalRoughnessCtx, 895, 1740, 16, 0.7);
 
-            pathY += 170;
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "some paths are straight.", 80, pathY, IT);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "mine had plot twists.", 80, pathY + 30, IT);
-        } else {
-            drawCaduceusIcon(albedoCtx, finalRoughnessCtx, 155, pathY + 25, 22);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "MBBS", 205, pathY + 30, H3);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "2 years of medicine.", 110, pathY + 120, B);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "empathy carved deep.", 110, pathY + 138, B);
-            drawStickFigure(albedoCtx, finalRoughnessCtx, 200, pathY + 40, 16, 0.7);
-
-            drawWiltedFlowerIcon(albedoCtx, finalRoughnessCtx, 440, pathY + 75, 22);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "THE PLOT TWIST", 350, pathY + 50, H3);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "battles fought.", 380, pathY + 120, B);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "ground eventually found.", 380, pathY + 138, B);
-            drawStickFigure(albedoCtx, finalRoughnessCtx, 480, pathY + 70, 16, 0.7);
-
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 642, pathY + 30, 22, 24, 1.5);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "CA", 650, pathY + 5, H3);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "foundation + inter G1.", 600, pathY + 120, B);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "discipline as survival.", 600, pathY + 138, B);
-            drawStickFigure(albedoCtx, finalRoughnessCtx, 700, pathY + 65, 16, 0.7);
-
-            drawLaptopIcon(albedoCtx, finalRoughnessCtx, 855, pathY + 35, 22);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "B.E CSE", 828, pathY + 5, H3);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "building now.", 820, pathY + 120, B);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "a better direction.", 820, pathY + 138, B);
-            drawStickFigure(albedoCtx, finalRoughnessCtx, 895, pathY + 60, 16, 0.7);
-
-            pathY += 230;
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "some paths are straight. mine had plot twists.", 200, pathY, IT);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "still a meaningful one.", 370, pathY + 30, IT);
-        }
+        // Bottom annotation
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "some paths are straight. mine had plot twists.", 200, 1880, IT);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "still a meaningful one.", 370, 1910, IT);
 
         // ═══════════════════════════════════════════════════
-        // SECTION 5 — PHILOSOPHY
+        // SECTION 5 — PHILOSOPHY (canvas y: 1960–2170)
+        // Camera sees this at scrollProgress ≈ 0.88
         // ═══════════════════════════════════════════════════
 
-        if (!isMobile) pathY = 1960;
-        else pathY += 80;
+        drawWobblyLine(albedoCtx, finalRoughnessCtx, 60, 1960, 960, 1960, 1.0);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "05) PHILOSOPHY", 80, 1995, H2);
 
-        drawWobblyLine(albedoCtx, finalRoughnessCtx, 60, pathY, 960, pathY, 1.0);
-        drawWobblyText(albedoCtx, finalRoughnessCtx, "05) PHILOSOPHY", 80, pathY + 35, H2);
+        // Quote 1 (top-left)
+        drawWobblyBox(albedoCtx, finalRoughnessCtx, 80, 2015, 380, 85, 2.0);
+        drawEyeIcon(albedoCtx, finalRoughnessCtx, 96, 2043, 18);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "We do not see things as they are.", 120, 2038, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "We see them as we are.", 120, 2058, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "— Anaïs Nin", 120, 2090, SM);
 
-        let qY = pathY + 55;
+        // Quote 2 (top-right)
+        drawWobblyBox(albedoCtx, finalRoughnessCtx, 500, 2015, 420, 100, 2.0);
+        drawMeditatingIcon(albedoCtx, finalRoughnessCtx, 516, 2055, 18);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "We must be willing to let go of the life", 542, 2038, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "we planned so as to have the life that", 542, 2058, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "is waiting for us.", 542, 2078, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "— Joseph Campbell", 542, 2100, SM);
 
-        if (isMobile) {
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 80, qY, 380, 85, 2.0);
-            drawEyeIcon(albedoCtx, finalRoughnessCtx, 96, qY + 28, 18);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "We do not see things as they are.", 120, qY + 23, B);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "We see them as we are.", 120, qY + 43, B);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "— Anaïs Nin", 120, qY + 75, SM);
-            qY += 120;
+        // Quote 3 (bottom-left)
+        drawWobblyBox(albedoCtx, finalRoughnessCtx, 80, 2110, 420, 80, 2.0);
+        drawMountainIcon(albedoCtx, finalRoughnessCtx, 96, 2133, 16);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "In a day, when you don't come across any", 120, 2133, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "problems - you can be sure that you are", 120, 2153, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "travelling in a wrong path", 120, 2173, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "— Swami Vivekananda", 120, 2210, SM);
 
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 80, qY, 420, 100, 2.0);
-            drawMeditatingIcon(albedoCtx, finalRoughnessCtx, 96, qY + 40, 18);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "We must be willing to let go of the life", 122, qY + 23, B);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "we planned so as to have the life that", 122, qY + 43, B);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "is waiting for us.", 122, qY + 63, B);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "— Joseph Campbell", 122, qY + 85, SM);
-            qY += 140;
-
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 80, qY, 420, 80, 2.0);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "ideas kept me alive longer than", 100, qY + 33, B);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "certainty did.", 100, qY + 53, B);
-            qY += 120;
-        } else {
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 80, qY, 380, 85, 2.0);
-            drawEyeIcon(albedoCtx, finalRoughnessCtx, 96, qY + 28, 18);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "We do not see things as they are.", 120, qY + 23, B);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "We see them as we are.", 120, qY + 43, B);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "— Anaïs Nin", 120, qY + 75, SM);
-
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 500, qY, 420, 100, 2.0);
-            drawMeditatingIcon(albedoCtx, finalRoughnessCtx, 516, qY + 40, 18);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "We must be willing to let go of the life", 542, qY + 23, B);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "we planned so as to have the life that", 542, qY + 43, B);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "is waiting for us.", 542, qY + 63, B);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "— Joseph Campbell", 542, qY + 85, SM);
-
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 80, qY + 95, 420, 80, 2.0);
-            drawMountainIcon(albedoCtx, finalRoughnessCtx, 96, qY + 118, 16);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "In a day, when you don't come across any", 120, qY + 118, B);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "problems - you can be sure that you are", 120, qY + 138, B);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "travelling in a wrong path", 120, qY + 158, B);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "— Swami Vivekananda", 120, qY + 195, SM);
-
-            drawWobblyBox(albedoCtx, finalRoughnessCtx, 510, qY + 105, 400, 55, 2.0);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "ideas kept me alive", 530, qY + 128, B);
-            drawWobblyText(albedoCtx, finalRoughnessCtx, "longer than certainty did.", 530, qY + 148, B);
-            qY += 220;
-        }
+        // Quote 4 (bottom-right)
+        drawWobblyBox(albedoCtx, finalRoughnessCtx, 510, 2120, 400, 55, 2.0);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "ideas kept me alive", 530, 2143, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "longer than certainty did.", 530, 2163, B);
 
         // ═══════════════════════════════════════════════════
-        // SECTION 6 — CONTACT
+        // SECTION 6 — CONTACT (canvas y: 2180–2350)
+        // Camera sees this at scrollProgress ≈ 1.0
         // ═══════════════════════════════════════════════════
 
-        if (!isMobile) qY = 2220;
-        else qY += 40;
+        // Push the contact section down to make room for the larger quote
+        albedoCtx.translate(0, 40);
+        finalRoughnessCtx.translate(0, 40);
 
-        drawWobblyLine(albedoCtx, finalRoughnessCtx, 60, qY, 960, qY, 1.0);
-        drawWobblyText(albedoCtx, finalRoughnessCtx, "06) CONTACT ME", 80, qY + 35, H2);
+        drawWobblyLine(albedoCtx, finalRoughnessCtx, 60, 2180, 960, 2180, 1.0);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "06) CONTACT ME", 80, 2215, H2);
 
         // Campfire scene (center)
-        const cfX = isMobile ? 250 : 500, cfY = qY + 90;
+        const cfX = 500, cfY = 2270;
         drawWobblyLine(albedoCtx, finalRoughnessCtx, cfX - 25, cfY + 15, cfX + 25, cfY + 15, 3.5);
         drawWobblyLine(albedoCtx, finalRoughnessCtx, cfX - 12, cfY + 20, cfX + 12, cfY - 10, 3.0);
         drawWobblyCurve(albedoCtx, finalRoughnessCtx, [[cfX - 5, cfY + 10], [cfX, cfY - 18], [cfX + 5, cfY + 10]], 2.0);
         drawWobblyCurve(albedoCtx, finalRoughnessCtx, [[cfX - 3, cfY + 10], [cfX + 3, cfY - 25], [cfX + 8, cfY + 10]], 2.0);
         drawStickFigure(albedoCtx, finalRoughnessCtx, cfX - 50, cfY + 10, 20, 0.8);
         drawStickFigure(albedoCtx, finalRoughnessCtx, cfX + 52, cfY + 10, 20, 0.8);
-        
         // Stars
-        for (const [sx, sy] of [[cfX - 50, cfY - 50], [cfX - 30, cfY - 65], [cfX + 20, cfY - 73], [cfX + 60, cfY - 57], [cfX + 90, cfY - 70], [cfX + 110, cfY - 45], [cfX + 130, cfY - 65]] as [number, number][]) {
+        for (const [sx, sy] of [[450, 2220], [470, 2205], [520, 2197], [560, 2213], [590, 2200], [610, 2225], [630, 2205]] as [number, number][]) {
           const dS = (ctx: CanvasRenderingContext2D, isR: boolean) => { ctx.fillStyle = isR ? "rgba(255,255,255,0.85)" : "rgba(6,5,4,0.7)"; ctx.fillRect(sx, sy, 1.5, 1.5); };
           dS(albedoCtx, false); dS(finalRoughnessCtx, true);
         }
 
-        let cY = cfY + (isMobile ? 60 : -25);
-        let cX = isMobile ? 80 : 80;
-
         // Warm invitation text
-        drawWobblyText(albedoCtx, finalRoughnessCtx, "if you've made it this far,", cX, cY, B);
-        drawWobblyText(albedoCtx, finalRoughnessCtx, "let's build something cool together.", cX, cY + 20, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "if you've made it this far,", 80, 2245, B);
+        drawWobblyText(albedoCtx, finalRoughnessCtx, "let's build something cool together.", 80, 2265, B);
 
-        cY += 60;
         // Contact details (left)
+        drawEnvelopeIcon(albedoCtx, finalRoughnessCtx, 88, 2293, 16);
         drawWobblyText(albedoCtx, finalRoughnessCtx, "nikhilnag98@gmail.com", 112, 2296, B);
 
         drawPhoneIcon(albedoCtx, finalRoughnessCtx, 88, 2315, 16);

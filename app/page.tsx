@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import dynamic from "next/dynamic";
 import Preloader from "@/components/Preloader";
 import CursorTorch from "@/components/CursorTorch";
@@ -25,48 +25,28 @@ const NAV_SECTIONS = [
 ];
 
 export default function Home() {
+  // canvasReady: WebGL/3D scene is loaded and rendering
+  // entered: user has lit a sconce and the preloader has exited
   const [canvasReady, setCanvasReady] = useState(false);
   const [entered, setEntered] = useState(false);
-  const [isMobile, setIsMobile] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      // Mobile is either narrow screen or portrait orientation
-      setIsMobile(window.innerWidth < 768 || window.innerHeight > window.innerWidth);
-    };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
-  }, []);
 
   const handleEnter = useCallback(() => {
     setEntered(true);
   }, []);
 
   return (
-    <main className="relative w-screen h-[100dvh] overflow-hidden bg-black select-none custom-cursor-active">
-      
-      {/* 
-        Native Mobile Scroll Container 
-        Appears only after entering the cave.
-        Allows native browser vertical scrolling which we sync to the 3D camera.
-      */}
-      {isMobile && entered && (
-        <div 
-          id="mobile-scroll-container"
-          className="absolute inset-0 z-40 overflow-y-auto"
-          style={{ WebkitOverflowScrolling: 'touch' }}
-        >
-          <div className="w-full h-[700vh]" />
-        </div>
-      )}
-
+    <main className="relative w-screen h-screen overflow-hidden bg-black select-none custom-cursor-active">
       <Preloader isLoading={!canvasReady} onEnter={handleEnter} />
 
-      {/* Full-screen 3D cave */}
+      {/*
+        Full-screen 3D cave — mouse drives camera in ALL directions.
+        Moving torch down → camera pans to Contact section.
+        Moving torch up   → camera pans to Hero section.
+        Moving torch left/right → reveals cave wall sides.
+        No scrolling needed.
+      */}
       <CinematicCanvas
         onLoaded={() => setCanvasReady(true)}
-        isMobile={isMobile ?? false}
       />
 
       {/* Contact links overlay */}
@@ -87,7 +67,7 @@ export default function Home() {
       {/* Decode handwriting popup */}
       <DecodeHandwriting />
 
-      {/* Custom wooden torch cursor */}
+      {/* Custom wooden torch cursor — ALWAYS visible (including loading screen) */}
       <CursorTorch visibleAfterLoading={true} />
     </main>
   );

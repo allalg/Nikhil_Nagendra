@@ -7,22 +7,12 @@ interface CursorTorchProps {
 }
 
 export default function CursorTorch({ visibleAfterLoading }: CursorTorchProps) {
-  const [isTouch, setIsTouch] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const torchBodyRef = useRef<HTMLDivElement>(null);
   const flameGroupRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const sparksContainerRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
-
-  // Detect touch devices
-  useEffect(() => {
-    const touchMedia = window.matchMedia("(pointer: coarse)");
-    setIsTouch(touchMedia.matches);
-    const listener = (e: MediaQueryListEvent) => setIsTouch(e.matches);
-    touchMedia.addEventListener("change", listener);
-    return () => touchMedia.removeEventListener("change", listener);
-  }, []);
 
   // Mouse coordinate tracking
   const mouseRef = useRef({ x: 0, y: 0 });
@@ -177,8 +167,6 @@ export default function CursorTorch({ visibleAfterLoading }: CursorTorchProps) {
   }, [isVisible]);
 
   if (!isVisible) return null;
-
-  if (isTouch) return null;
 
   return (
     <div className="fixed inset-0 pointer-events-none z-[70] select-none overflow-hidden">
